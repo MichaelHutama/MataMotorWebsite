@@ -45,13 +45,13 @@
                 <a href="#" class="text-gray-900 hover:text-blue-600 px-3 py-2 text-base font-medium transition duration-200">
                     History
                 </a>
-                <a href="#" class="text-gray-900 hover:text-blue-600 px-3 py-2 text-base font-medium transition duration-200">
+                <a href="{{ route('aboutus') }}" class="text-gray-900 hover:text-blue-600 px-3 py-2 text-base font-medium transition duration-200">
                     About Us
                 </a>
             </div>
 
             <div class="flex items-center gap-2 md:gap-4">
-                <a href="#" class="text-gray-900 hover:text-blue-600 transition duration-200">
+                <a href="{{ route('profile') }}" class="text-gray-900 hover:text-blue-600 transition duration-200">
                     <span class="sr-only">User Profile</span>
                     <svg class="h-9 w-9 md:h-11 md:w-11" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
                         <path fill-rule="evenodd" d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 4c1.93 0 3.5 1.57 3.5 3.5S13.93 13 12 13s-3.5-1.57-3.5-3.5S10.07 6 12 6zm0 14c-2.03 0-3.93-.8-5.38-2.14.28-1.55 2.87-2.86 5.38-2.86s5.1 1.31 5.38 2.86C15.93 19.2 14.03 20 12 20z" clip-rule="evenodd" />
