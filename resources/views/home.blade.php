@@ -22,7 +22,7 @@
 
 <body class="bg-[#e5e7eb] min-h-screen flex flex-col">
 
-    @include('layouts.navbar')
+    @include('layouts.navbarcustomer')
     @include('layouts.modals')
 
     <!--HEADER-->
@@ -74,7 +74,7 @@
         <div>
             <div class="flex justify-between items-center mb-6">
                 <h2 class="text-2xl font-bold text-[#1e5eb8]">Popular Spare Parts</h2>
-                <a href="/spareparts" class="text-[#1e5eb8] font-bold text-base bg-transparent hover:underline">
+                <a href="{{ route('products') }}" class="text-[#1e5eb8] font-bold text-base bg-transparent hover:underline">
                     See All Spareparts
                 </a>
             </div>
@@ -107,22 +107,31 @@
 
             {{-- Pengecekan Kondisi IF Sebelum Melakukan Loop Data Database --}}
             @if(isset($products) && count($products) > 0)
-                <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-4">
+                <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-6">
                     {{-- Proses Loop Card Product --}}
                     @foreach($products as $product)
-                        <div class="bg-white rounded-lg shadow-sm border border-gray-200 overflow-hidden flex flex-col justify-between p-3">
-                            <div class="w-full aspect-square bg-gray-50 flex items-center justify-center rounded overflow-hidden mb-3">
-                                <img src="{{ $product['image'] }}" alt="{{ $product['name'] }}" class="object-cover h-full w-full">
+                        <a href="{{ route('productdetail') }}" class="bg-white rounded-xl shadow-[0_5px_15px_rgba(0,0,0,0.08)] border border-gray-200 overflow-hidden flex flex-col transition-all hover:shadow-[0_8px_25px_rgba(0,0,0,0.12)] hover:scale-[1.015] block">
+                            <div class="relative bg-gradient-to-br from-[#f1fcf5] to-[#e8f7ec] h-48 flex items-center justify-center p-6">
+                                <img src="{{ $product['image'] }}" alt="{{ $product['name'] }}" class="h-36 w-auto object-contain">
+
+                                <div class="absolute bottom-0 right-0 w-8 h-8 bg-[#6da543] flex items-center justify-center text-white">
+                                    <svg xmlns="http://www.w3.org/2000/svg" class="h-4.5 w-4.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z" />
+                                    </svg>
+                                </div>
                             </div>
-                            <div class="flex flex-col justify-between flex-grow">
-                                <h4 class="text-gray-800 text-lg font-regular line-clamp-2 mb-1 min-h-[1.5rem] style="font-family: 'Carlito', sans-serif;">
+
+                            <div class="h-2 w-full bg-[#616161]"></div>
+
+                            <div class="p-4 flex flex-col flex-grow text-left font-century">
+                                <h4 class="text-sm font-semibold text-gray-800 line-clamp-2 leading-snug font-century mb-1">
                                     {{ $product['name'] }}
                                 </h4>
-                                <p class="text-[#2159e7] font-bold text-3xl style="font-family: 'Carlito', sans-serif;">
+                                <p class="text-2xl font-extrabold text-[#1e5eb8] tracking-tight">
                                     IDR {{ number_format($product['price'], 0, ',', '.') }}
                                 </p>
                             </div>
-                        </div>
+                        </a>
                     @endforeach
                 </div>
             @else

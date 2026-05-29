@@ -13,7 +13,7 @@
 </head>
 <body class="bg-white min-h-screen text-[#333333]" style="font-family: 'Arial', 'Didact Gothic', sans-serif;">
 
-    @include('layouts.navbar')
+    @include('layouts.navbarcustomer')
     @include('layouts.modals')
 
     <!--HEADER-->

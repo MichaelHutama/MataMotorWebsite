@@ -18,8 +18,9 @@
 </head>
 <body class="bg-[#e5e7eb] min-h-screen" style="font-family: 'Century Gothic', sans-serif;">
 
-    @include('layouts.navbar')
+    @include('layouts.navbarcustomer')
     @include('layouts.modals')
+    @include('layouts.modalcustomer')   
 
     <main class="max-w-7xl mx-auto px-4 py-12">
         <div class="flex flex-col lg:flex-row gap-8">
@@ -37,7 +38,7 @@
                         <div class="w-40 h-40 rounded-full border-4 border-white overflow-hidden mb-4 shadow-lg">
                             <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQDeJKgiu6uY5MC1KNtOQVfoez9go6GOmm8gw&s" alt="User Profile" class="w-full h-full object-cover">
                         </div>
-                        <h2 class="text-3xl font-bold tracking-wide mb-1 min-h-[1.5rem]">Suryanto</h2>
+                        <h2 class="text-3xl font-bold tracking-wide mb-1 min-h-6">Suryanto</h2> 
                         <p class="text-base opacity-90 font-medium" style="font-family: 'Didact Gothic', sans-serif;">C0001</p>
                     </div>
 
@@ -74,12 +75,12 @@
                         </div>
 
                         <div class="grid grid-cols-2 gap-4 pt-4">
-                            <button class="bg-[#0a4f96] hover:bg-blue-800 text-white text-base font-bold py-3 px-4 rounded-lg flex items-center justify-center gap-2 transition-all">
+                            <button type="button" onclick="editProfile()" class="bg-[#0a4f96] hover:bg-blue-800 text-white text-base font-bold py-3 px-4 rounded-lg flex items-center justify-center gap-2 transition-all">
                                 <i class="fa-solid fa-pen-to-square"></i> Edit Profile
                             </button>
-                            <button onclick="confirmLogout()" class="bg-[#b91c1c] hover:bg-red-800 text-white text-base font-bold py-3 px-4 rounded-lg flex items-center justify-center gap-2 transition-all">
+                            <a href="{{route('login')}}" class="bg-[#b91c1c] hover:bg-red-800 text-white text-base font-bold py-3 px-4 rounded-lg flex items-center justify-center gap-2 transition-all">
                                 <i class="fa-solid fa-right-from-bracket"></i> Log Out
-                            </button>
+                            </a>
                         </div>
                     </div>
                 </div>
@@ -89,7 +90,7 @@
                 <div class="bg-white rounded-3xl shadow-sm border border-gray-200 p-8 min-h-[500px]">
                     <div class="flex justify-between items-center mb-8">
                         <h2 class="text-3xl font-bold text-black">My Vehicle</h2>
-                        <button class="bg-[#0a4f96] hover:bg-blue-800 text-white text-sm font-bold py-2.5 px-6 rounded-lg flex items-center gap-2">
+                        <button onclick="addVehicle()" class="bg-[#0a4f96] hover:bg-blue-800 text-white text-sm font-bold py-2.5 px-6 rounded-lg flex items-center gap-2">
                             <span class="text-lg">+</span> Add New Vehicle
                         </button>
                     </div>
@@ -121,6 +122,10 @@
                         ];
                     @endphp
 
+                    <script>
+                        window.customerVehicles = @json($vehicles);
+                    </script>
+
                     {{-- LOOP KENDARAAN --}}
                     <div class="space-y-4">
                         @if(isset($vehicles) && count($vehicles) > 0)
@@ -146,8 +151,8 @@
                                     </div>
 
                                     <div class="flex gap-4 font-bold text-s">
-                                        <button class="text-[#0a4f96] hover:underline onclick="editVehicle({{$vehicle['id']}})">Edit</button>
-                                        <button onclick="confirmDelete('{{ $vehicle['id'] }}')" class="text-[#b91c1c] hover:underline">Delete</button>
+                                        <button type="button" onclick="editVehicle({{ $vehicle['id'] }})" class="text-[#0a4f96] hover:underline">Edit</button>
+                                        <button onclick="confirmDelete('Vehicle', 'Delete this vehicle?')" class="text-[#b91c1c] hover:underline">Delete</button>
                                     </div>
                                 </div>
                             @endforeach

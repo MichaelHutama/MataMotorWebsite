@@ -18,43 +18,62 @@
                 confirmButtonColor: '#004bb6',
             });
         }
-</script>
 
-    <script>
+
         // SweetAlert Delete Vehicle
-        function confirmDelete(vehicleName) {
+        function confirmDelete(type,message) {
             Swal.fire({
-                title: 'Hapus Kendaraan?',
-                text: "Anda akan menghapus " + vehicleName + " dari daftar.",
+                html: message,
                 icon: 'warning',
                 showCancelButton: true,
-                confirmButtonColor: '#b91c1c',
-                cancelButtonColor: '#6b7280',
-                confirmButtonText: 'Ya, Hapus!',
-                cancelButtonText: 'Batal'
+                buttonsStyling: false,
+                confirmButtonText: 'OK',
+                cancelButtonText: 'Cancel',
+                didOpen: () => {
+                    const popup = Swal.getPopup();
+                    if (popup) {
+                        popup.style.fontFamily = "'Century Gothic', sans-serif";
+                    }
+                },
+                customClass: {
+                    popup: '!rounded-[30px]',
+                    htmlContainer: '!text-center',
+                    confirmButton: '!bg-[#15395c] !text-white !rounded-[30px] !font-bold !text-sm !px-6 !py-2.5 !min-w-[110px] !shadow-none',
+                    cancelButton: '!bg-gray-500 !text-white !rounded-[30px] !font-bold !text-sm !px-6 !py-2.5 !min-w-[110px] !shadow-none !ml-3'
+                }
             }).then((result) => {
                 if (result.isConfirmed) {
-                    Swal.fire('Terhapus!', 'Kendaraan berhasil dihapus.', 'success');
+                    showSuccessModal(type + ' deleted');
                 }
             });
         }
 
-        // SweetAlert Logout
-        function confirmLogout() {
-            Swal.fire({
-                title: 'Log Out?',
-                text: "Apakah anda yakin ingin keluar dari akun?",
-                icon: 'question',
-                showCancelButton: true,
-                confirmButtonColor: '#0a4f96',
-                cancelButtonColor: '#6b7280',
-                confirmButtonText: 'Ya, Keluar',
-                cancelButtonText: 'Tetap Disini'
-            }).then((result) => {
-                if (result.isConfirmed) {
-                    // Logic logout bisa ditaruh disini (redirect atau form submit)
-                    Swal.fire('Logged Out', 'Berhasil keluar akun.', 'success');
+
+
+        /**
+         MODAL SUCCESS MESSAGE
+         */
+        function showSuccessModal(message) {
+            return Swal.fire({
+                icon: 'success',
+                iconColor: '#10b981',
+                title: message,
+                width: 380,
+                buttonsStyling: false,
+                background: '#ffffff',
+                confirmButtonText: 'OK',
+                customClass: {
+                    popup: '!rounded-3xl !p-8 flex flex-col items-center shadow-2xl border border-gray-100',
+                    icon: '!scale-125 !my-4',
+                    title: '!text-2xl !font-bold !text-gray-800 !mt-2 !mb-6 !tracking-wide',
+                    confirmButton: '!bg-[#15395c] hover:!bg-[#1c4974] !text-white !rounded-full !px-14 !py-3 !text-sm !font-bold !tracking-[0.1em] !shadow-md hover:!shadow-lg transition-all duration-300 !outline-none'
                 }
             });
         }
+
+        // Contoh pemanggilan
+        // showSuccessModal('2 items added');
+
+
+
     </script>
