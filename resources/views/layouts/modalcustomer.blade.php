@@ -143,7 +143,7 @@
 				<div class="space-y-5 text-[15px] text-black text-left">
 					<div>
 						<label class="block mb-2 font-normal text-left">Category</label>
-						<div class="relative group">
+						<div id="category-dropdown" class="relative">
 							<input id="vehicle-category" type="hidden" value="${vehicle.type ?? ''}">
 							<button type="button" data-vehicle-category-button class="flex h-[42px] w-full items-center justify-between rounded-[10px] border border-gray-500 bg-white px-4 text-left text-[15px] text-gray-500 outline-none transition-colors hover:border-[#15395c]">
 								<span data-vehicle-category-label>${selectedCategory}</span>
@@ -151,7 +151,7 @@
 									<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
 								</svg>
 							</button>
-							<div class="absolute left-0 top-full z-20 mt-2 hidden w-full overflow-hidden rounded-[14px] border border-gray-200 bg-white shadow-[0_12px_30px_rgba(0,0,0,0.12)] group-hover:block">
+							<div data-vehicle-category-menu class="absolute left-0 top-full z-20 mt-2 hidden w-full overflow-hidden rounded-[14px] border border-gray-200 bg-white shadow-[0_12px_30px_rgba(0,0,0,0.12)]">
 								${categoryOptions.map((option) => `
 									<button type="button" data-vehicle-category-option="${option.value}" class="block w-full px-4 py-3 text-left text-[15px] text-gray-700 transition-colors hover:bg-[#eef4fb] hover:text-[#15395c]">
 										${option.label}
@@ -208,6 +208,7 @@
 				const cancelButton = popup.querySelector('[data-vehicle-cancel]');
 				const submitButton = popup.querySelector('[data-vehicle-submit]');
 				const categoryButton = popup.querySelector('[data-vehicle-category-button]');
+				const categoryMenu = popup.querySelector('[data-vehicle-category-menu]');
 				const categoryLabel = popup.querySelector('[data-vehicle-category-label]');
 				const categoryHiddenInput = popup.querySelector('#vehicle-category');
 				const categoryOptionButtons = popup.querySelectorAll('[data-vehicle-category-option]');
@@ -216,10 +217,18 @@
 					cancelButton.addEventListener('click', () => Swal.close());
 				}
 
-				if (categoryButton) {
-					categoryButton.addEventListener('click', () => {
-						categoryButton.blur();
+				if (categoryButton && categoryMenu) {
+					categoryButton.addEventListener('click', (e) => {
+						e.stopPropagation();
+						categoryMenu.classList.toggle('hidden');
 					});
+
+					// Tutup menu jika klik di luar
+					document.addEventListener('click', (e) => {
+						if (!categoryButton.contains(e.target) && !categoryMenu.contains(e.target)) {
+							categoryMenu.classList.add('hidden');
+						}
+					}, { once: true });
 				}
 
 				categoryOptionButtons.forEach((optionButton) => {
@@ -233,6 +242,10 @@
 
 						if (categoryLabel) {
 							categoryLabel.textContent = selectedOption ? selectedOption.label : selectedValue;
+						}
+
+						if (categoryMenu) {
+							categoryMenu.classList.add('hidden');
 						}
 					});
 				});
@@ -270,4 +283,6 @@
 	function editVehicle(vehicleId) {
 		openVehicleModal('edit', vehicleId);
 	}
+
+	
 </script>

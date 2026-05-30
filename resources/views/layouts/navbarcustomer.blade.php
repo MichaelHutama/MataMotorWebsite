@@ -39,10 +39,10 @@
                 <a href="{{ route('customer-cart') }}" class="text-gray-900 hover:text-blue-600 px-3 py-2 text-lg font-medium transition duration-200">
                     Cart
                 </a>
-                <a href="#" class="text-gray-900 hover:text-blue-600 px-3 py-2 text-lg font-medium transition duration-200">
+                <a href="{{ route('customer-booking') }}" class="text-gray-900 hover:text-blue-600 px-3 py-2 text-lg font-medium transition duration-200">
                     Booking
                 </a>
-                <a href="#" class="text-gray-900 hover:text-blue-600 px-3 py-2 text-lg font-medium transition duration-200">
+                <a href="{{ route('customer-history') }}" class="text-gray-900 hover:text-blue-600 px-3 py-2 text-lg font-medium transition duration-200">
                     History
                 </a>
                 <a href="{{ route('aboutus') }}" class="text-gray-900 hover:text-blue-600 px-3 py-2 text-lg font-medium transition duration-200">

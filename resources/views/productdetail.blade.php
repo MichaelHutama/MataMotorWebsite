@@ -225,6 +225,10 @@
           const qty = qtyInput.value;
           showSuccessModal('You have added ' + qty + ' units to your cart.');
       });
+
+      buyBtn.addEventListener('click', function() {
+          window.location.href = "{{ route('customer-checkout') }}?id={{ $product['id'] }}&qty=" + qtyInput.value;
+      });
     });
   </script>
 </body>

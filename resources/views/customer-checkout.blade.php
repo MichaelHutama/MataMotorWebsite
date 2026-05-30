@@ -29,6 +29,8 @@
 <body class="bg-gray-50 min-h-screen flex flex-col font-didact text-gray-800">
 
   @include('layouts.navbarcustomer')
+  @include('layouts.modals')
+  @include('layouts.modalcustomer')
 
   @php
     $checkoutItems = [
@@ -37,6 +39,13 @@
             'name' => 'Filter Oli Mesin Toyota Avanza',
             'price' => 45000,
             'qty' => 2,
+            'img' => 'images/backgroundaboutus.jpg'
+        ],
+        [
+            'id' => 2,
+            'name' => 'Filter Udara Mesin Toyota Avanza',
+            'price' => 60000,
+            'qty' => 1,
             'img' => 'images/backgroundaboutus.jpg'
         ]
     ];
@@ -172,7 +181,7 @@
         <div class="pt-6 border-t border-gray-100">
             <div class="flex flex-col gap-1">
                 <span class="text-normal text-gray-400 uppercase tracking-[0.2em] font-bold">Total Payable</span>
-                <span id="grand-total" class="text-3xl font-black font-inter text-[#15395c] tracking-tight">IDR {{ number_format($subtotal, 0, ',', '.') }}</span>
+                <span id="grand-total" data-subtotal="{{ $subtotal }}" class="text-3xl font-black font-inter text-[#15395c] tracking-tight">IDR {{ number_format($subtotal, 0, ',', '.') }}</span>
             </div>
         </div>
 
@@ -181,7 +190,6 @@
                 'id' => 'place-order-btn',
                 'text' => 'CONTINUE',
                 'type' => 'button',
-                'onclick' => "window.location.href='".route('customer-payment')."'",
                 'class' => 'w-full py-4 bg-mm-navy hover:bg-[#1c4974] text-white font-bold rounded-full shadow-lg shadow-blue-900/10 transition-all flex items-center justify-center gap-2 text-xs tracking-[0.2em] font-inter uppercase'
             ])
         </div>
@@ -195,7 +203,7 @@
   <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
   <script>
     document.addEventListener('DOMContentLoaded', function() {
-        const checkoutTotal = document.getElementById('checkout-total');
+        const checkoutTotal = document.getElementById('grand-total');
         const shippingDisplay = document.getElementById('shipping-cost-display');
         const courierOptions = document.getElementById('courier-options');
         const fulfillmentRadios = document.querySelectorAll('input[name="fulfillment"]');
@@ -208,7 +216,10 @@
             
             if (selectedFulfillment === 'delivery') {
                 courierOptions.classList.remove('hidden');
-                shipping = parseInt(document.querySelector('input[name="courier"]:checked').value);
+                const selectedCourier = document.querySelector('input[name="courier"]:checked');
+                if (selectedCourier) {
+                    shipping = parseInt(selectedCourier.value);
+                }
                 if (shippingDisplay) shippingDisplay.textContent = window.MataMotor.formatIDR(shipping);
             } else {
                 courierOptions.classList.add('hidden');
@@ -226,31 +237,24 @@
         updateTotal();
 
         // Place Order Logic
-        document.getElementById('place-order-btn').addEventListener('click', function() {
-            Swal.fire({
-                title: '<span class="font-inter uppercase font-black text-mm-navy">Confirm Order?</span>',
-                html: '<p class="font-didact text-gray-500">Please double check your shipping address and contact info before proceeding.</p>',
-                icon: 'question',
-                showCancelButton: true,
-                confirmButtonText: 'YES, PROCESS IT',
-                cancelButtonText: 'NOT YET',
-                buttonsStyling: false,
-                customClass: {
-                    popup: '!rounded-3xl !p-8',
-                    confirmButton: 'bg-mm-navy text-white px-8 py-3 rounded-xl font-bold font-inter text-xs tracking-widest hover:bg-[#1c4974] transition-all mr-3',
-                    cancelButton: 'bg-gray-100 text-gray-400 px-8 py-3 rounded-xl font-bold font-inter text-xs tracking-widest hover:bg-gray-200 transition-all'
-                }
-            }).then((result) => {
-                if (result.isConfirmed) {
-                    Swal.fire({
-                        title: 'SUCCESS!',
-                        text: 'Your order has been placed successfully.',
-                        icon: 'success',
-                        confirmButtonText: 'VIEW MY ORDERS'
-                    });
-                }
+        const placeOrderBtn = document.getElementById('place-order-btn');
+        if (placeOrderBtn) {
+            placeOrderBtn.addEventListener('click', function() {
+                console.log('Continue button clicked');
+                confirmModal(
+                    'Confirm Order?', 
+                    'Please double check your shipping address and contact info before proceeding.', 
+                    'CONFIRM', 
+                    'NOT YET', 
+                    'question',
+                    function() {
+                        window.location.href = "{{ route('customer-payment') }}";
+                    }
+                );
             });
-        });
+        } else {
+            console.error('Button place-order-btn not found');
+        }
     });
   </script>
 </body>

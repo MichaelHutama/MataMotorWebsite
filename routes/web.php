@@ -46,3 +46,14 @@ Route::get('/customer-payment', function () {
     return view('customer-payment');
 })->name('customer-payment');
 
+Route::get('/customer-paymentsuccess', function () {
+    return view('customer-paymentsuccess');
+})->name('customer-paymentsuccess');
+
+Route::get('customer-history', function () {
+    return view('customer-history');
+})->name('customer-history');
+
+Route::get('/customer-booking', function () {
+    return view('customer-booking');
+})->name('customer-booking');

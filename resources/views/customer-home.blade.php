@@ -17,13 +17,31 @@
     <link href="https://fonts.googleapis.com/css2?family=Albert+Sans:ital,wght@0,100..900;1,100..900&display=swap" rel="stylesheet">
 
     <link href="https://fonts.googleapis.com/css2?family=Carlito:wght@400;700&display=swap" rel="stylesheet">
-    
+    <link href="https://fonts.googleapis.com/css2?family=Didact+Gothic&family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        'mm-navy': '#15395c',
+                    },
+                    fontFamily: {
+                        'didact': ['"Didact Gothic"', 'sans-serif'],
+                        'inter': ['Inter', 'sans-serif'],
+                        'albert': ['"Albert Sans"', 'sans-serif'],
+                        'century': ['"Century Gothic"', 'AppleGothic', 'sans-serif'],
+                    }
+                }
+            }
+        }
+    </script>
 </head>
 
 <body class="bg-[#e5e7eb] min-h-screen flex flex-col">
 
     @include('layouts.navbarcustomer')
     @include('layouts.modals')
+    @include('layouts.modalcustomer')
 
     <!--HEADER-->
     <div 
@@ -47,24 +65,28 @@
         
         <!--CARD BOOKING-->
         <div>
-            <h2 class="text-2xl font-bold text-[#1e5eb8] mb-4">Your Booking</h2>
+            <h2 class="text-2xl font-black text-mm-navy font-inter tracking-tight uppercase mb-8">Your Booking</h2>
             
-            <div class="bg-white rounded-xl border border-gray-400 shadow-[0_5px_12px_rgba(0,0,0,0.15)] pt-10 pb-8 px-6 max-w-md mx-auto text-center flex flex-col items-center justify-center">
-                
-                <img src="{{ asset('images/Clock.png') }}" alt="Clock Icon" class="w-28 h-28 object-contain mb-5">
-                
-                <h3 class="text-3xl md:text-4xl font-bold text-black tracking-tight mb-2">
-                    CUCI-22
-                </h3>
-                
-                <p class="text-black text-sm md:text-base font-normal mb-5 tracking-wide">
-                    <span class="font-bold">Waiting.</span> 2 queues left for your turn.
-                </p>
-                
-                <button onclick="modalBookingDetails()" class="bg-[#0a4f96] hover:bg-[#073b70] text-white font-medium py-2.5 px-11 rounded-lg text-base tracking-wide transition-colors duration-200" style="font-family: 'Albert Sans', sans-serif;">
-                    View Details
-                </button>
-                
+            @php
+                // Dummy data for home card to match component requirement
+                $booking = [
+                    'code' => 'CUCI-22',
+                    'type' => 'Wash and Detailing',
+                    'vehicle' => 'B 2026 ABC — Honda Vario 150',
+                    'time' => '2024-03-20; 10:00 AM',
+                    'notes' => 'Please clean thoroughly',
+                    'status' => 'waiting',
+                    'queue' => 2
+                ];
+            @endphp
+
+            <div class="grid grid-cols-1 max-w-sm mx-auto">
+                <div onclick="showBookingDetail('{{ $booking['code'] }}', '{{ $booking['type'] }}', '{{ $booking['vehicle'] }}', '{{ $booking['time'] }}', '{{ $booking['notes'] }}', '{{ $booking['status'] }}')"
+                    class="bg-white rounded-[32px] shadow-sm border border-gray-100 p-8 text-center space-y-6 cursor-pointer hover:shadow-xl hover:shadow-blue-900/5 transition-all group relative overflow-hidden flex flex-col justify-between">
+                    <div class="absolute top-0 left-0 w-full h-1 bg-mm-navy scale-x-0 group-hover:scale-x-100 transition-transform origin-left"></div>
+                    
+                    @include('components.booking-card-content', ['booking' => $booking])
+                </div>
             </div>
         </div>
 
