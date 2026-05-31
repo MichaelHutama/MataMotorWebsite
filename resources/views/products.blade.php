@@ -19,7 +19,11 @@
 </head>
 <body class="bg-white min-h-screen flex flex-col">
 
-    @include('layouts.navbarcustomer')
+    @if(request()->is('mechanic-*'))
+        @include('layouts.navbarmechanic')
+    @else
+        @include('layouts.navbarcustomer')
+    @endif
 
     <!--HEADER-->
     <x-header 
@@ -115,19 +119,24 @@
 
           <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
             @foreach($products as $product)
+              @php
+                $detailRoute = request()->is('mechanic-*') ? route('mechanic-productdetail') : route('productdetail');
+              @endphp
               <!-- Product Card -->
-              <a href="{{ route('productdetail') }}" class="bg-white rounded-xl shadow-[0_5px_15px_rgba(0,0,0,0.08)] border border-gray-200 overflow-hidden flex flex-col transition-all hover:shadow-[0_8px_25px_rgba(0,0,0,0.12)] hover:scale-[1.015] block">
+              <a href="{{ $detailRoute }}" class="bg-white rounded-xl shadow-[0_5px_15px_rgba(0,0,0,0.08)] border border-gray-200 overflow-hidden flex flex-col transition-all hover:shadow-[0_8px_25px_rgba(0,0,0,0.12)] hover:scale-[1.015] block">
                 
                 <!-- Image Container with soft gradient background -->
                 <div class="relative bg-gradient-to-br from-[#f1fcf5] to-[#e8f7ec] h-48 flex items-center justify-center p-6">
                   <img src="{{ $product['image'] }}" alt="{{ $product['name'] }}" class="h-36 w-auto object-contain">
                   
                   <!-- Green bottom-right shopping bag icon -->
+                  @if(!request()->is('mechanic-*'))
                   <div class="absolute bottom-0 right-0 w-8 h-8 bg-[#6da543] flex items-center justify-center text-white">
                     <svg xmlns="http://www.w3.org/2000/svg" class="h-4.5 w-4.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                       <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z" />
                     </svg>
                   </div>
+                  @endif
                 </div>
 
                 <!-- Dark Grey Divider Strip -->

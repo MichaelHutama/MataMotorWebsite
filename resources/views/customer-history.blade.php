@@ -289,6 +289,7 @@
           <!-- Status Tabs -->
           <div class="flex flex-wrap gap-2 pt-2">
             <button onclick="filterByStatus('all', this)" class="status-btn px-5 py-2 rounded-full border border-mm-navy bg-blue-50 text-mm-navy text-sm font-didact">All</button>
+            <button data-status="Pending" onclick="filterByStatus('Pending', this)" class="status-btn px-5 py-2 rounded-full border border-gray-300 bg-white text-gray-500 text-sm font-didact hover:border-mm-navy transition-colors">Pending</button>
             <button data-status="Processing" onclick="filterByStatus('Processing', this)" class="status-btn px-5 py-2 rounded-full border border-gray-300 bg-white text-gray-500 text-sm font-didact hover:border-mm-navy transition-colors">Processing</button>
             <button data-status="Success" onclick="filterByStatus('Success', this)" class="status-btn px-5 py-2 rounded-full border border-gray-300 bg-white text-gray-500 text-sm font-didact hover:border-mm-navy transition-colors">Success</button>
             <button data-status="Received" onclick="filterByStatus('Received', this)" class="status-btn px-5 py-2 rounded-full border border-gray-300 bg-white text-gray-500 text-sm font-didact hover:border-mm-navy transition-colors">Received</button>
@@ -617,7 +618,7 @@
                             <div class="flex items-start gap-4">
                                 <img src="${item.image}" class="h-6 w-6 object-contain mt-1 opacity-70" alt="">
                                 <div class="flex-1">
-                                    <div class="flex items-center gap-2 mb-2">
+                                    <div class="flex items-center gap-3 mb-2">
                                         <p class="font-bold text-gray-800 font-albert text-sm">${item.name}</p>
                                         <span class="px-2 py-0.5 ${item.status_color} text-white text-[9px] font-black uppercase rounded tracking-wider">${item.status}</span>
                                     </div>
@@ -653,11 +654,17 @@
                                             </div>
                                         </div>
                                     `;
-                                } else {
+                                } else if (serviceItems.every(s => s.status === 'Success')) {
                                     return `
                                         <button onclick='openReviewModal(${JSON.stringify(transaction).replace(/'/g, "&apos;")})' class="px-8 py-2 bg-mm-navy hover:bg-[#1c4974] text-white text-sm font-bold rounded-full shadow-md transition-all tracking-widest font-inter">
                                             Add Review
                                         </button>
+                                    `;
+                                } else {
+                                    return `
+                                         <div class="mt-4 p-3 bg-gray-50 rounded-xl border border-gray-100 text-center w-full">
+                                            <p class="text-[10px] font-bold text-gray-400 uppercase tracking-widest font-century">Review available after service is completed</p>
+                                        </div>
                                     `;
                                 }
                             })()}
@@ -677,7 +684,7 @@
                             <div class="flex items-start gap-4">
                                 <img src="${item.image}" class="h-10 w-10 object-contain rounded-lg shadow-sm" alt="">
                                 <div class="flex-1">
-                                    <div class="flex items-center gap-2 mb-2">
+                                    <div class="flex items-center gap-3 mb-2">
                                         <p class="font-bold text-gray-800 font-albert text-sm">${item.name}</p>
                                         <span class="px-2 py-0.5 ${item.status_color} text-white text-[9px] font-black uppercase rounded tracking-wider">${item.status}</span>
                                     </div>
@@ -721,21 +728,31 @@
         }
 
         Swal.fire({
+            showCloseButton: true,
             html: `
-                <div class="text-center mb-6">
-                    <div class="flex justify-center gap-3 mb-4">
-                        <img src="images/cart-line-icon.webp" class="h-7 w-7 opacity-80" alt="Cart">
-                        <img src="images/repairing-icon.webp" class="h-7 w-7 opacity-80" alt="Repair">
+                <div class="text-left font-didact p-4">
+                    <div class="flex items-center gap-3 mb-6">
+                        <h2 class="text-2xl font-black text-black font-century uppercase tracking-tight">Transaction Detail</h2>
+                        <span class="px-2 py-0.5 bg-green-500 text-white text-[9px] font-black uppercase rounded tracking-wider">
+                            ${transaction.payment.status}
+                        </span>
                     </div>
-                    <h2 class="text-3xl font-black text-black font-century tracking-tight mb-1">Transaction Detail</h2>
-                    <p class="text-gray-600 text-sm mb-1 font-didact">${transaction.id}</p>
-                    <p class="text-orange-400 text-sm tracking-wide font-didact">${transaction.date}, ${transaction.time}</p>
+
+                    <div class="space-y-1 mb-8 pb-4 border-b border-gray-100">
+                        <div class="grid grid-cols-[auto_1fr] gap-x-8 gap-y-1 text-[12px] items-center font-century">
+                            <span class="text-gray-400 font-medium tracking-wide">Transaction ID</span>
+                            <span class="font-bold text-black border-l border-gray-100 pl-4">${transaction.id}</span>
+                            
+                            <span class="text-gray-400 font-medium tracking-wide">Date & Time</span>
+                            <span class="font-bold text-black border-l border-gray-100 pl-4">${transaction.date}, ${transaction.time}</span>
+                        </div>
+                    </div>
                 </div>
 
-                <div class="text-left">
+                <div class="text-left px-4">
                     ${sectionsHtml}
                     
-                    <div class="py-8 grid grid-cols-1 md:grid-cols-2 gap-8 items-start">
+                    <div class="py-8 grid grid-cols-1 md:grid-cols-2 gap-8 items-start px-4">
                         <div class="space-y-8">
                             <!-- Payment Detail -->
                             <div class="space-y-1 font-century">

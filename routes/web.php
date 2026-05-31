@@ -26,9 +26,17 @@ Route::get('/products', function () {
     return view('products');
 })->name('products');
 
+Route::get('/mechanic-products', function () {
+    return view('products');
+})->name('mechanic-products');
+
 Route::get('/productdetail', function () {
     return view('productdetail');
 })->name('productdetail');
+
+Route::get('/mechanic-productdetail', function () {
+    return view('productdetail');
+})->name('mechanic-productdetail');
 
 Route::get('/owner-home', function () {
     return view('owner-home');
@@ -57,3 +65,19 @@ Route::get('customer-history', function () {
 Route::get('/customer-booking', function () {
     return view('customer-booking');
 })->name('customer-booking');
+
+
+
+Route::get('/loginadminmechanic', function(){
+    return view('loginadminmechanic');
+})->name('loginadminmechanic');
+
+
+Route::get('/mechanic-home', function () {
+    return view('mechanic-home');
+})->name('mechanic-home');
+
+Route::get('/mechanic-history', function () {
+    return view('mechanic-history');
+})->name('mechanic-history');
+

@@ -65,7 +65,7 @@
         
         <!--CARD BOOKING-->
         <div>
-            <h2 class="text-2xl font-black text-mm-navy font-inter tracking-tight uppercase mb-8">Your Booking</h2>
+            <h2 class="text-xl font-bold text-[#15395C] font-inter uppercase tracking-widest border-b mb-8">Your Booking</h2>
             
             @php
                 // Dummy data for home card to match component requirement
@@ -95,8 +95,8 @@
         <!--CARD SPAREPARTS-->
         <div>
             <div class="flex justify-between items-center mb-6">
-                <h2 class="text-2xl font-bold text-[#1e5eb8]">Popular Spare Parts</h2>
-                <a href="{{ route('products') }}" class="text-[#1e5eb8] font-bold text-base bg-transparent hover:underline">
+                <h2 class="text-xl font-bold text-[#15395C] font-inter uppercase tracking-widest border-b">Popular Spare Parts</h2>
+                <a href="{{ route('products') }}" class="text-sm font-bold text-[#15395C] font-inter tracking-widest border-b bg-transparent hover:underline">
                     See All Spareparts
                 </a>
             </div>

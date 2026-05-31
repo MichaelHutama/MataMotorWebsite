@@ -24,7 +24,11 @@
 </head>
 <body class="bg-gray-50 text-gray-800 font-didact">
 
-  @include('layouts.navbarcustomer')
+  @if(request()->is('mechanic-*'))
+      @include('layouts.navbarmechanic')
+  @else
+      @include('layouts.navbarcustomer')
+  @endif
   @include('layouts.modals')
 
   @php
@@ -105,6 +109,19 @@
       <div class="lg:col-span-1">
         <div class="sticky top-8 space-y-6">
           <div class="bg-white rounded-2xl shadow-sm border border-gray-100 p-6 md:p-8">
+            @if(request()->is('mechanic-*'))
+                <div class="text-center py-6">
+                    <div class="mb-4 flex justify-center">
+                        <div class="p-3 bg-blue-50 rounded-full text-mm-navy">
+                            <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                            </svg>
+                        </div>
+                    </div>
+                    <h3 class="text-lg font-bold text-gray-900 mb-2 font-inter uppercase tracking-widest leading-tight">Staff View Only</h3>
+                    <p class="text-xs text-gray-500 font-medium leading-relaxed px-2">Buying products is restricted to customers. Staff can view stock and pricing for reference.</p>
+                </div>
+            @else
             <h3 class="text-base font-bold text-gray-900 mb-6 font-inter uppercase tracking-widest border-b border-gray-50 pb-4">Order Summary</h3>
             
             <div class="space-y-6">
@@ -151,6 +168,7 @@
                 ])
               </div>
             </div>
+            @endif
 
             
           </div>
@@ -172,63 +190,65 @@
       const addBtn = document.getElementById('add-to-cart');
       const buyBtn = document.getElementById('buy-now');
 
-      // Fungsi pembantu untuk memunculkan Toast Peringatan
-      function showStockWarning() {
-          Swal.fire({
-              toast: true,
-              position: 'top-end',
-              icon: 'warning',
-              title: 'Kuantitas disesuaikan dengan stok tersedia',
-              showConfirmButton: false,
-              timer: 2000
+      if (qtyInput && totalPriceEl && addBtn && buyBtn) {
+          // Fungsi pembantu untuk memunculkan Toast Peringatan
+          function showStockWarning() {
+              Swal.fire({
+                  toast: true,
+                  position: 'top-end',
+                  icon: 'warning',
+                  title: 'Kuantitas disesuaikan dengan stok tersedia',
+                  showConfirmButton: false,
+                  timer: 2000
+              });
+          }
+
+          // Initialize global quantity control
+          window.MataMotor.initQuantityControl('qty', 'btn-minus', 'btn-plus', function(newQty) {
+              // Biarkan fungsi eksternal mengupdate harga secara normal
+              const total = basePrice * newQty;
+              totalPriceEl.textContent = window.MataMotor.formatIDR(total);
+          });
+
+          // SOLUSI: Pasang listener 'click' langsung pada tombol plus untuk mengecek kondisi SEBELUM/SAAT diklik
+          document.getElementById('btn-plus').addEventListener('click', function() {
+              // Jika nilai input sebelum/saat diklik sudah mencapai batas maksimal stok
+              if (parseInt(qtyInput.value) >= maxStock) {
+                  showStockWarning();
+              }
+          });
+
+          // Pengaman ekstra saat user mengetik manual lewat keyboard (di luar kontrol tombol +/-)
+          qtyInput.addEventListener('input', function() {
+              let val = parseInt(qtyInput.value) || 1;
+              if (val > maxStock) {
+                  qtyInput.value = maxStock;
+                  const total = basePrice * maxStock;
+                  totalPriceEl.textContent = window.MataMotor.formatIDR(total);
+                  showStockWarning();
+              }
+          });
+
+          qtyInput.addEventListener('blur', function() {
+              let val = parseInt(qtyInput.value) || 1;
+              if (val > maxStock) {
+                  qtyInput.value = maxStock;
+                  const total = basePrice * maxStock;
+                  totalPriceEl.textContent = window.MataMotor.formatIDR(total);
+                  showStockWarning();
+              }
+          });
+
+          // Actions
+          addBtn.addEventListener('click', function() {
+              const qty = qtyInput.value;
+              showSuccessModal('You have added ' + qty + ' units to your cart.');
+          });
+
+          buyBtn.addEventListener('click', function() {
+              window.location.href = "{{ route('customer-checkout') }}?id={{ $product['id'] }}&qty=" + qtyInput.value;
           });
       }
-
-      // Initialize global quantity control
-      window.MataMotor.initQuantityControl('qty', 'btn-minus', 'btn-plus', function(newQty) {
-          // Biarkan fungsi eksternal mengupdate harga secara normal
-          const total = basePrice * newQty;
-          totalPriceEl.textContent = window.MataMotor.formatIDR(total);
-      });
-
-      // SOLUSI: Pasang listener 'click' langsung pada tombol plus untuk mengecek kondisi SEBELUM/SAAT diklik
-      document.getElementById('btn-plus').addEventListener('click', function() {
-          // Jika nilai input sebelum/saat diklik sudah mencapai batas maksimal stok
-          if (parseInt(qtyInput.value) >= maxStock) {
-              showStockWarning();
-          }
-      });
-
-      // Pengaman ekstra saat user mengetik manual lewat keyboard (di luar kontrol tombol +/-)
-      qtyInput.addEventListener('input', function() {
-          let val = parseInt(qtyInput.value) || 1;
-          if (val > maxStock) {
-              qtyInput.value = maxStock;
-              const total = basePrice * maxStock;
-              totalPriceEl.textContent = window.MataMotor.formatIDR(total);
-              showStockWarning();
-          }
-      });
-
-      qtyInput.addEventListener('blur', function() {
-          let val = parseInt(qtyInput.value) || 1;
-          if (val > maxStock) {
-              qtyInput.value = maxStock;
-              const total = basePrice * maxStock;
-              totalPriceEl.textContent = window.MataMotor.formatIDR(total);
-              showStockWarning();
-          }
-      });
-
-      // Actions
-      addBtn.addEventListener('click', function() {
-          const qty = qtyInput.value;
-          showSuccessModal('You have added ' + qty + ' units to your cart.');
-      });
-
-      buyBtn.addEventListener('click', function() {
-          window.location.href = "{{ route('customer-checkout') }}?id={{ $product['id'] }}&qty=" + qtyInput.value;
-      });
     });
   </script>
 </body>
