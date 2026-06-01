@@ -38,10 +38,6 @@ Route::get('/mechanic-productdetail', function () {
     return view('productdetail');
 })->name('mechanic-productdetail');
 
-Route::get('/owner-home', function () {
-    return view('owner-home');
-})->name('owner-home');
-
 Route::get('/customer-cart', function () {
     return view('customer-cart');
 })->name('customer-cart');
@@ -81,3 +77,29 @@ Route::get('/mechanic-history', function () {
     return view('mechanic-history');
 })->name('mechanic-history');
 
+
+
+
+Route::get('/owner-home', function () {
+    return view('owner-home');
+})->name('owner-home');
+
+Route::get('/owner-catalog', function () {
+    return view('owner-catalog');
+})->name('owner-catalog');
+
+Route::get('/owner-mechanic', function() {
+    return view('owner-mechanic');
+})->name('owner-mechanic');
+
+Route::get('/owner-managebooking', function() {
+    return view('owner-managebooking');
+})->name('owner-managebooking');
+
+Route::get('/owner-transaction', function() {
+    return view('owner-transaction');
+})->name('owner-transaction');
+
+Route::get('/owner-addtransaction', function() {
+    return view('owner-addtransaction');
+})->name('owner-addtransaction');

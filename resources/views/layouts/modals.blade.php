@@ -48,7 +48,7 @@
 
         // SweetAlert Delete Something
         function confirmDelete(type,message) {
-            confirmModal('Confirm Delete', message, 'DELETE', 'Cancel', 'warning', function() {
+            confirmModal('Confirm Delete', message, 'DELETE', 'CANCEL', 'warning', function() {
                 showSuccessModal(type + ' deleted');
             });
         }
@@ -81,7 +81,7 @@
 
 
         
-        function showBookingDetail(code, type, vehicle, time, notes, status) {
+        function showBookingDetail(code, type, vehicle, time, notes, status, customerName = null, customerId = null) {
 		let statusHtml = '';
 		if(status === 'pending') statusHtml = '<span class="px-3 py-1 bg-gray-100 text-gray-500 rounded-full text-sm fpn font-black">Pending</span>';
 		if(status === 'waiting') statusHtml = '<span class="px-3 py-1 bg-blue-50 text-blue-600 rounded-full text-sm font-black">In Queue</span>';
@@ -94,10 +94,18 @@
 			html: `
 				<div class="text-left space-y-4 pt-4">
 					<div class="p-4 bg-gray-50 rounded-2xl border border-gray-100 space-y-4">
+						${status ? `
 						<div class="flex justify-between items-center">
 							<span class="text-sm font-bold text-black font-didact  tracking-wider">Status</span>
 							<div class="font-albert text-sm font-light">${statusHtml}</div>
 						</div>
+						` : ''}
+						${customerName ? `
+						<div class="flex justify-between items-center">
+							<span class="text-sm font-bold text-black font-didact tracking-wider">Customer</span>
+							<span class="font-light text-black font-albert text-sm text-right">${customerName} ${customerId ? `(${customerId})` : ''}</span>
+						</div>
+						` : ''}
 						<div class="flex justify-between items-center">
 							<span class="text-sm font-bold text-black font-didact tracking-wider">Vehicle</span>
 							<span class="font-light text-black font-albert text-sm text-right">${vehicle}</span>

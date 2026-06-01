@@ -732,10 +732,7 @@
             html: `
                 <div class="text-left font-didact p-4">
                     <div class="flex items-center gap-3 mb-6">
-                        <h2 class="text-2xl font-black text-black font-century uppercase tracking-tight">Transaction Detail</h2>
-                        <span class="px-2 py-0.5 bg-green-500 text-white text-[9px] font-black uppercase rounded tracking-wider">
-                            ${transaction.payment.status}
-                        </span>
+                        <h2 class="text-2xl font-black text-black font-century uppercase tracking-tight text-center">Transaction Detail</h2>
                     </div>
 
                     <div class="space-y-1 mb-8 pb-4 border-b border-gray-100">

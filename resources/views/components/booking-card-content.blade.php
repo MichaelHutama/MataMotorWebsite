@@ -1,3 +1,4 @@
+@props(['booking', 'hideStatus' => false])
 @php
     $getServiceIconLocal = function($type) {
         $type = strtolower($type);
@@ -44,12 +45,13 @@
         </div>
     </div>
 
-    <div class="space-y-1">
+    <div class="space-y-1 text-center">
         <p class="font-black text-mm-navy text-xl font-inter tracking-tight">{{ $booking['code'] }}</p>
         <p class="text-gray-400 font-bold uppercase tracking-widest text-[10px]">{{ $booking['type'] }}</p>
     </div>
 </div>
 
+@if(!$hideStatus)
 <div class="pt-4 border-t border-gray-50 flex flex-col items-center gap-3">
     @if($booking['status'] == 'pending')
         <div class="flex items-center gap-2 px-4 py-1.5 bg-gray-100 text-gray-500 rounded-full">
@@ -86,3 +88,4 @@
         <p class="text-[9px] font-bold text-gray-300 uppercase tracking-[0.2em]">{{ explode(';', $booking['time'] ?? '')[0] }}</p>
     @endif
 </div>
+@endif
