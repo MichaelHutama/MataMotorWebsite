@@ -287,16 +287,15 @@
           </div>
 
           <!-- Status Tabs -->
-          <div class="flex flex-wrap gap-2 pt-2">
-            <button onclick="filterByStatus('all', this)" class="status-btn px-5 py-2 rounded-full border border-mm-navy bg-blue-50 text-mm-navy text-sm font-didact">All</button>
-            <button data-status="Pending" onclick="filterByStatus('Pending', this)" class="status-btn px-5 py-2 rounded-full border border-gray-300 bg-white text-gray-500 text-sm font-didact hover:border-mm-navy transition-colors">Pending</button>
-            <button data-status="Processing" onclick="filterByStatus('Processing', this)" class="status-btn px-5 py-2 rounded-full border border-gray-300 bg-white text-gray-500 text-sm font-didact hover:border-mm-navy transition-colors">Processing</button>
-            <button data-status="Success" onclick="filterByStatus('Success', this)" class="status-btn px-5 py-2 rounded-full border border-gray-300 bg-white text-gray-500 text-sm font-didact hover:border-mm-navy transition-colors">Success</button>
-            <button data-status="Received" onclick="filterByStatus('Received', this)" class="status-btn px-5 py-2 rounded-full border border-gray-300 bg-white text-gray-500 text-sm font-didact hover:border-mm-navy transition-colors">Received</button>
-            <button data-status="Delivering" onclick="filterByStatus('Delivering', this)" class="status-btn px-5 py-2 rounded-full border border-gray-300 bg-white text-gray-500 text-sm font-didact hover:border-mm-navy transition-colors">Delivering</button>
-            <button data-status="Ready for Pickup" onclick="filterByStatus('Ready for Pickup', this)" class="status-btn px-5 py-2 rounded-full border border-gray-300 bg-white text-gray-500 text-sm font-didact hover:border-mm-navy transition-colors">Ready for Pickup</button>
-            <button data-status="Cancelled" onclick="filterByStatus('Cancelled', this)" class="status-btn px-5 py-2 rounded-full border border-gray-300 bg-white text-gray-500 text-sm font-didact hover:border-mm-navy transition-colors">Cancelled</button>
-          </div>
+        <div class="flex flex-wrap gap-2 pt-2">
+          <button type="button" onclick="filterByStatus('All', this)" class="status-btn px-5 py-2 rounded-full border border-mm-navy bg-blue-50 text-mm-navy text-sm font-didact transition-all">All</button>
+          <button type="button" data-status="Pending" onclick="filterByStatus('Pending', this)" class="status-btn px-5 py-2 rounded-full border border-gray-300 bg-white text-gray-500 text-sm font-didact hover:border-mm-navy transition-all">Pending</button>
+          <button type="button" data-status="Processing" onclick="filterByStatus('Processing', this)" class="status-btn px-5 py-2 rounded-full border border-gray-300 bg-white text-gray-500 text-sm font-didact hover:border-mm-navy transition-all">Processing</button>
+          <button type="button" data-status="Delivering" onclick="filterByStatus('Delivering', this)" class="status-btn px-5 py-2 rounded-full border border-gray-300 bg-white text-gray-500 text-sm font-didact hover:border-mm-navy transition-all">Delivering</button>
+          <button type="button" data-status="Ready For Pickup" onclick="filterByStatus('Ready For Pickup', this)" class="status-btn px-5 py-2 rounded-full border border-gray-300 bg-white text-gray-500 text-sm font-didact hover:border-mm-navy transition-all">Ready For Pickup</button>
+          <button type="button" data-status="Success" onclick="filterByStatus('Success', this)" class="status-btn px-5 py-2 rounded-full border border-gray-300 bg-white text-gray-500 text-sm font-didact hover:border-mm-navy transition-all">Success</button>
+          <button type="button" data-status="Received" onclick="filterByStatus('Received', this)" class="status-btn px-5 py-2 rounded-full border border-gray-300 bg-white text-gray-500 text-sm font-didact hover:border-mm-navy transition-all">Received</button>
+          <button type="button" data-status="Cancelled" onclick="filterByStatus('Cancelled', this)" class="status-btn px-5 py-2 rounded-full border border-gray-300 bg-white text-gray-500 text-sm font-didact hover:border-mm-navy transition-all">Cancelled</button>
         </div>
 
         <!-- Transaction Cards -->

@@ -44,11 +44,12 @@
     $transactions = [
         [
             'id' => 'TX-1001',
-            'date' => '2026-06-01',
+            'created_at' => '2026-06-01 14:25:00',
             'customer_id' => 'CUST-01',
             'customer_name' => 'Ahmad Subarjo',
-            'type' => 'Both', 
+            'type' => 'Sparepart Sales & Service', 
             'status' => 'Processing',
+            'rating' => 5,
             'spareparts' => [
                 ['name' => 'Brake Pad Front', 'qty' => 1, 'price' => 125000],
                 ['name' => 'Engine Oil Motul 1L', 'qty' => 1, 'price' => 150000]
@@ -57,37 +58,39 @@
                 ['name' => 'Full Engine Tuning', 'price' => 200000]
             ],
             'vehicle' => 'Honda Vario 150 (B 1234 ABC)',
-            'delivery' => false, // Dipaksa false karena mengandung Service
+            'delivery' => false,
             'review' => 'Pelayanan servis mesin sangat memuaskan!'
         ],
         [
             'id' => 'TX-1002',
-            'date' => '2026-06-01',
+            'created_at' => '2026-06-01 09:10:00',
             'customer_id' => 'CUST-02',
             'customer_name' => 'Siti Aminah',
             'type' => 'Sparepart',
             'status' => 'Delivering',
+            'rating' => null,
             'spareparts' => [
                 ['name' => 'Tubeless Tire Maxxis', 'qty' => 2, 'price' => 320000]
             ],
             'services' => [],
             'vehicle' => '',
-            'delivery' => true, // BERHASIL: Delivery aktif khusus untuk Sparepart Sales
+            'delivery' => true,
             'review' => null
         ],
         [
             'id' => 'TX-1003',
-            'date' => '2026-05-30',
+            'created_at' => '2026-05-30 19:45:00',
             'customer_id' => 'CUST-03',
             'customer_name' => 'Budi Setiadi',
             'type' => 'Service',
             'status' => 'Success',
+            'rating' => 4,
             'spareparts' => [],
             'services' => [
                 ['name' => 'Light CVT Service', 'price' => 85000]
             ],
             'vehicle' => 'Yamaha NMax 155 (F 5678 XYZ)',
-            'delivery' => false, // Dipaksa false karena Service murni
+            'delivery' => false,
             'review' => 'Mekanik ramah, pengerjaan cepat bener.'
         ]
     ];
@@ -103,7 +106,7 @@
             <span>+ Add New Transaction</span>
           </button>
           <div id="addTransactionDropdown" class="hidden absolute right-0 mt-2 w-56 rounded-xl bg-white shadow-lg border border-gray-100 z-50 py-1 font-century text-sm">
-            <a href="{{ route('owner-addtransaction', ['mode' => 'both']) }}" class="block px-4 py-2.5 text-gray-700 hover:bg-gray-50">Sparepart Sales & Service</a>
+            <a href="{{ route('owner-addtransaction', ['mode' => 'sparepart sales & service']) }}" class="block px-4 py-2.5 text-gray-700 hover:bg-gray-50">Sparepart Sales & Service</a>
             <a href="{{ route('owner-addtransaction', ['mode' => 'sparepart']) }}" class="block px-4 py-2.5 text-gray-700 hover:bg-gray-50">Sparepart Sales</a>
             <a href="{{ route('owner-addtransaction', ['mode' => 'service']) }}" class="block px-4 py-2.5 text-gray-700 hover:bg-gray-50">Service Only</a>
           </div>
@@ -113,7 +116,7 @@
       <div class="bg-white rounded-[24px] p-6 shadow-sm border border-gray-100 mb-6 flex flex-col gap-4">
         <div class="flex flex-wrap items-center justify-between gap-4">
           <div class="flex gap-4 border-b border-gray-100 pb-2 flex-1 min-w-[300px]">
-            <button type="button" onclick="filterByCategory('All', this)" class="category-tab pb-2 border-b-2 border-blue-600 text-blue-600 px-2 font-bold font-century text-sm transition-all">All Types</button>
+            <button type="button" onclick="filterByCategory('All', this)" class="category-tab pb-2 border-b-2 border-blue-600 text-blue-600 px-2 font-bold font-century text-sm transition-all">All</button>
             <button type="button" onclick="filterByCategory('Sparepart', this)" class="category-tab pb-2 border-b-2 border-transparent text-gray-400 px-2 font-century text-sm hover:text-mm-navy transition-all">Sparepart Sales</button>
             <button type="button" onclick="filterByCategory('Service', this)" class="category-tab pb-2 border-b-2 border-transparent text-gray-400 px-2 font-century text-sm hover:text-mm-navy transition-all">Services</button>
           </div>
@@ -127,49 +130,73 @@
         </div>
 
         <div class="flex flex-wrap gap-2 pt-2">
-          <button type="button" onclick="filterByStatus('All', this)" class="status-filter-btn bg-mm-navy text-white px-4 py-1.5 rounded-full text-xs font-bold uppercase tracking-wider font-century transition-all">All Status</button>
-          <button type="button" onclick="filterByStatus('Pending', this)" class="status-filter-btn bg-gray-100 text-gray-500 hover:bg-amber-50 px-4 py-1.5 rounded-full text-xs font-bold uppercase tracking-wider font-century transition-all">Pending</button>
-          <button type="button" onclick="filterByStatus('Processing', this)" class="status-filter-btn bg-gray-100 text-gray-500 hover:bg-blue-50 px-4 py-1.5 rounded-full text-xs font-bold uppercase tracking-wider font-century transition-all">Processing</button>
-          <button type="button" onclick="filterByStatus('Delivering', this)" class="status-filter-btn bg-gray-100 text-gray-500 hover:bg-amber-50 px-4 py-1.5 rounded-full text-xs font-bold uppercase tracking-wider font-century transition-all">Delivering</button>
-          <button type="button" onclick="filterByStatus('Ready For Pickup', this)" class="status-filter-btn bg-gray-100 text-gray-500 hover:bg-purple-50 px-4 py-1.5 rounded-full text-xs font-bold uppercase tracking-wider font-century transition-all">Ready For Pickup</button>
-          <button type="button" onclick="filterByStatus('Success', this)" class="status-filter-btn bg-gray-100 text-gray-500 hover:bg-green-50 px-4 py-1.5 rounded-full text-xs font-bold uppercase tracking-wider font-century transition-all">Success</button>
-          <button type="button" onclick="filterByStatus('Cancelled', this)" class="status-filter-btn bg-gray-100 text-gray-500 hover:bg-red-50 px-4 py-1.5 rounded-full text-xs font-bold uppercase tracking-wider font-century transition-all">Cancelled</button>
+          <button type="button" onclick="filterByStatus('All', this)" class="status-btn px-5 py-2 rounded-full border border-mm-navy bg-blue-50 text-mm-navy text-sm font-didact transition-all">All</button>
+          <button type="button" data-status="Pending" onclick="filterByStatus('Pending', this)" class="status-btn px-5 py-2 rounded-full border border-gray-300 bg-white text-gray-500 text-sm font-didact hover:border-mm-navy transition-all">Pending</button>
+          <button type="button" data-status="Processing" onclick="filterByStatus('Processing', this)" class="status-btn px-5 py-2 rounded-full border border-gray-300 bg-white text-gray-500 text-sm font-didact hover:border-mm-navy transition-all">Processing</button>
+          <button type="button" data-status="Delivering" onclick="filterByStatus('Delivering', this)" class="status-btn px-5 py-2 rounded-full border border-gray-300 bg-white text-gray-500 text-sm font-didact hover:border-mm-navy transition-all">Delivering</button>
+          <button type="button" data-status="Ready For Pickup" onclick="filterByStatus('Ready For Pickup', this)" class="status-btn px-5 py-2 rounded-full border border-gray-300 bg-white text-gray-500 text-sm font-didact hover:border-mm-navy transition-all">Ready For Pickup</button>
+          <button type="button" data-status="Success" onclick="filterByStatus('Success', this)" class="status-btn px-5 py-2 rounded-full border border-gray-300 bg-white text-gray-500 text-sm font-didact hover:border-mm-navy transition-all">Success</button>
+          <button type="button" data-status="Received" onclick="filterByStatus('Received', this)" class="status-btn px-5 py-2 rounded-full border border-gray-300 bg-white text-gray-500 text-sm font-didact hover:border-mm-navy transition-all">Received</button>
+          <button type="button" data-status="Cancelled" onclick="filterByStatus('Cancelled', this)" class="status-btn px-5 py-2 rounded-full border border-gray-300 bg-white text-gray-500 text-sm font-didact hover:border-mm-navy transition-all">Cancelled</button>
         </div>
       </div>
 
       <div class="bg-white rounded-[24px] overflow-hidden border border-gray-200 shadow-sm">
         <table class="w-full text-left border-collapse font-didact text-[14px]">
           <thead>
-            <tr class="bg-gray-50 border-b border-gray-200 text-gray-400 font-century text-[13px] font-bold uppercase tracking-wider">
+            <tr class="bg-gray-50 border-b border-gray-200 text-gray-400 font-century text-[13px] text-center font-bold uppercase tracking-wider">
               <th class="px-6 py-4 w-28">ID</th>
-              <th class="px-6 py-4">Date</th>
+              <th class="px-6 py-4">Date & Time</th>
               <th class="px-6 py-4">Customer Name</th>
               <th class="px-6 py-4">Transaction Type</th>
+              <th class="px-6 py-4">Total Price</th>
               <th class="px-6 py-4 text-center">Status</th>
               <th class="px-6 py-4 text-center w-28">Action</th>
             </tr>
           </thead>
-          <tbody id="transactionTableBody" class="divide-y divide-gray-100 text-gray-700">
+          <tbody id="transactionTableBody" class="divide-y divide-gray-100 text-gray-700 text-center">
             @foreach($transactions as $tx)
+              @php
+                $totalSpareparts = array_reduce($tx['spareparts'], function($carry, $item) {
+                    return $carry + ($item['price'] * $item['qty']);
+                }, 0);
+                $totalServices = array_reduce($tx['services'], function($carry, $item) {
+                    return $carry + $item['price'];
+                }, 0);
+                $deliveryFee = ($tx['type'] === 'Sparepart' && $tx['delivery']) ? 15000 : 0;
+                $grandTotalRow = $totalSpareparts + $totalServices + $deliveryFee;
+
+                $formattedDateTime = date('Y-m-d, H:i \W\I\B', strtotime($tx['created_at']));
+              @endphp
               <tr class="transaction-row hover:bg-gray-50 transition-all cursor-pointer" 
                   data-type="{{ $tx['type'] }}" 
                   data-status="{{ $tx['status'] }}"
                   data-tx-json="{{ json_encode($tx) }}"
                   onclick="handleRowClick(this, event)">
-                <td class="px-6 py-4 font-mono font-bold text-gray-900">{{ $tx['id'] }}</td>
-                <td class="px-6 py-4 text-gray-500">{{ $tx['date'] }}</td>
+                <td class="px-6 py-4 font-century text-gray-900">{{ $tx['id'] }}</td>
+                <td class="px-6 py-4 text-gray-900 font-century">{{ $formattedDateTime }}</td>
                 <td class="px-6 py-4 font-medium text-gray-900 search-name">{{ $tx['customer_name'] }}</td>
-                <td class="px-6 py-4">
-                  <span class="px-3 py-1 rounded-lg text-xs font-bold bg-slate-100 text-slate-700 font-century">{{ $tx['type'] }}</span>
+                <td class="px-6 py-4 font-bold font-century text-gray-900">
+                  @if($tx['type'] === 'Sparepart Sales & Service')
+                    Sparepart Sales & Service
+                  @elseif($tx['type'] === 'Sparepart')
+                    Sparepart Sales
+                  @else
+                    Service Only
+                  @endif
+                </td>
+                <td class="px-6 py-4 font-century font-bold text-[#e67e22] whitespace-nowrap">
+                  IDR {{ number_format($grandTotalRow, 0, ',', '.') }}
                 </td>
                 <td class="px-6 py-4 text-center">
                   @php
                     $statusClass = match($tx['status']) {
-                      'Pending' => 'bg-amber-50 text-amber-600 border border-amber-200',
-                      'Processing' => 'bg-blue-50 text-blue-600 border border-blue-200',
-                      'Delivering' => 'bg-amber-100 text-amber-700 border border-amber-400',
+                      'Pending' => 'bg-amber-50 text-amber-500 border border-amber-100',
+                      'Processing' => 'bg-amber-50 text-amber-600 border border-amber-200',
+                      'Delivering' => 'bg-blue-50 text-blue-600 border border-blue-200',
                       'Ready For Pickup' => 'bg-purple-50 text-purple-600 border border-purple-200',
                       'Success' => 'bg-green-50 text-green-600 border border-green-200',
+                      'Received' => 'bg-teal-50 text-teal-600 border border-teal-200',
                       'Cancelled' => 'bg-red-50 text-red-600 border border-red-200',
                       default => 'bg-gray-50 text-gray-600'
                     };
@@ -200,7 +227,6 @@
         return Number(val).toLocaleString('id-ID');
     }
 
-     KakaoTalk
     function handleRowClick(rowElement, event) {
         try {
             const rawJson = rowElement.getAttribute('data-tx-json');
@@ -234,10 +260,10 @@
 
     function filterByStatus(status, element) {
       currentStatus = status;
-      document.querySelectorAll('.status-filter-btn').forEach(btn => {
-        btn.className = "status-filter-btn bg-gray-100 text-gray-500 hover:bg-gray-50 px-4 py-1.5 rounded-full text-xs font-bold uppercase tracking-wider font-century transition-all";
+      document.querySelectorAll('.status-btn').forEach(btn => {
+          btn.className = "status-btn px-5 py-2 rounded-full border border-gray-300 bg-white text-gray-500 text-sm font-didact hover:border-mm-navy transition-all";
       });
-      element.className = "status-filter-btn bg-mm-navy text-white px-4 py-1.5 rounded-full text-xs font-bold uppercase tracking-wider font-century transition-all";
+      element.className = "status-btn px-5 py-2 rounded-full border border-mm-navy bg-blue-50 text-mm-navy text-sm font-didact transition-all";
       runFilterEngine();
     }
 
@@ -250,7 +276,7 @@
         const type = row.getAttribute('data-type');
         const status = row.getAttribute('data-status');
 
-        const matchCategory = (currentCategory === 'All' || type === currentCategory || type === 'Both');
+        const matchCategory = (currentCategory === 'All' || type === currentCategory || type === 'Sparepart Sales & Service');
         const matchStatus = (currentStatus === 'All' || status === currentStatus);
         const matchKeyword = (id.includes(kw) || name.includes(kw));
 
@@ -264,11 +290,10 @@
 
     document.getElementById('txSearch').addEventListener('keyup', runFilterEngine);
 
-    // KUNCI UTAMA: Pilihan status 'Delivering' HANYA muncul jika bertipe Sparepart & memiliki pengantaran (delivery)
     function changeStatus(id, currentStatus, type, isSparepartDelivery) {
         let options = {
             'Pending': 'Pending',
-            'On Progress': 'On Progress'
+            'Processing': 'Processing'
         };
 
         if (type === 'Sparepart' && isSparepartDelivery) {
@@ -277,6 +302,7 @@
 
         options['Ready For Pickup'] = 'Ready For Pickup';
         options['Success'] = 'Success';
+        options['Received'] = 'Received';
         options['Cancelled'] = 'Cancelled';
 
         Swal.fire({
@@ -291,15 +317,11 @@
             confirmButtonText: 'Update'
         }).then((result) => {
             if (result.isConfirmed && result.value !== currentStatus) {
-                Swal.fire({
-                    icon: 'success',
-                    title: 'Status Updated',
-                    text: `Transaction ${id} is now ${result.value}`,
-                    timer: 1500,
-                    showConfirmButton: false
-                }).then(() => {
+                showSuccessModal("Status updated to " + result.value);
+                
+                setTimeout(function() {
                     location.reload();
-                });
+                }, 1500);
             }
         });
     }
@@ -317,7 +339,7 @@
                     desc: tx.vehicle ? tx.vehicle : 'Walk-in Customer Vehicle',
                     price: Number(sv.price).toLocaleString('id-ID'),
                     status: tx.status,
-                    status_color: tx.status === 'Success' ? 'bg-green-600' : (tx.status === 'Delivering' ? 'bg-amber-500' : 'bg-blue-600'),
+                    status_color: tx.status === 'Success' ? 'bg-green-600' : (tx.status === 'Processing' ? 'bg-amber-500' : 'bg-blue-600'),
                     image: 'https://cdn-icons-png.flaticon.com/512/3135/3135715.png'
                 });
             });
@@ -331,19 +353,24 @@
                     item_id: tx.id + '-SP',
                     price: Number(sp.price * sp.qty).toLocaleString('id-ID'),
                     status: tx.status,
-                    status_color: tx.status === 'Success' ? 'bg-green-600' : (tx.status === 'Delivering' ? 'bg-amber-500' : 'bg-blue-600'),
+                    status_color: tx.status === 'Success' ? 'bg-green-600' : (tx.status === 'Processing' ? 'bg-amber-500' : 'bg-blue-600'),
                     image: 'https://cdn-icons-png.flaticon.com/512/2316/2316041.png'
                 });
             });
         }
 
-        // AMAN: Validasi ketat, delivery object hanya dibangun jika tipe murni Sparepart sales saja
         const isEligibleForDelivery = (tx.type === 'Sparepart' && tx.delivery === true);
+        
+        const dtObj = new Date(tx.created_at);
+        const dateString = dtObj.toISOString().split('T')[0];
+        const timeString = dtObj.toTimeString().split(' ')[0].substring(0, 5);
 
         const transactionReplica = {
             id: tx.id,
-            date: tx.date,
-            time: '10:00',
+            date: dateString,
+            time: timeString,
+            review: tx.review,
+            rating: tx.rating ? parseInt(tx.rating) : 5, 
             delivery: isEligibleForDelivery ? {
                 receiver: tx.customer_name,
                 address: 'Jl. Raya Motor No. 45, Blok C, Jakarta Selatan',
@@ -351,11 +378,11 @@
                 notes: 'Kirim paket sparepart, harap ketuk pagar rumah.'
             } : null,
             payment: {
-                status: tx.status === 'Success' ? 'SUCCESS' : 'PENDING',
+                status: (tx.status === 'Success' || tx.status === 'Received') ? 'SUCCESS' : 'PENDING',
                 method: 'Bank Transfer',
                 channel: 'BVA'
             },
-            paid_time: tx.status === 'Success' ? '10:05 WIB' : '-',
+            paid_time: (tx.status === 'Success' || tx.status === 'Received') ? `${timeString} WIB` : '-',
             items: mappedItems
         };
 
@@ -439,6 +466,30 @@
             </div>`;
         }
 
+        let reviewHtml = '';
+        if ((tx.status === 'Success' || tx.status === 'Received') && transactionReplica.review) {
+            reviewHtml = `
+            <div class="space-y-1 font-century w-full mt-6 bg-gray-50/50 p-4 rounded-2xl border border-gray-100">
+                <h3 class="text-[12px] font-bold text-gray-400 font-inter tracking-widest border-b border-gray-50 mb-3 uppercase">Customer Review</h3>
+                <div class="grid grid-cols-[auto_1fr] gap-x-8 gap-y-2 text-[12px] items-center">
+                    <span class="text-gray-400 tracking-wide">Rating</span>
+                    <div class="flex text-orange-400 border-l border-gray-100 pl-4 gap-0.5">
+                        ${Array(5).fill(0).map((_, i) => {
+                            const starColorClass = i < transactionReplica.rating ? 'text-orange-400 fill-current' : 'text-gray-200';
+                            return `
+                                <svg class="w-3.5 h-3.5 ${starColorClass}" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg">
+                                    <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"/>
+                                </svg>
+                            `;
+                        }).join('')}
+                    </div>
+
+                    <span class="text-gray-400 font-medium tracking-wide">Comment</span>
+                    <span class="font-bold text-black border-l border-gray-100 pl-4 italic">"${transactionReplica.review}"</span>
+                </div>
+            </div>`;
+        }
+
         Swal.fire({
             showCloseButton: true,
             html: `
@@ -465,7 +516,7 @@
                     ${sectionsHtml}
                     
                     <div class="py-8 grid grid-cols-1 md:grid-cols-2 gap-8 items-start px-4">
-                        <div class="space-y-8">
+                        <div class="space-y-8 w-full">
                             <div class="space-y-1 font-century">
                                 <h3 class="text-lg font-bold text-[#15395c] font-inter tracking-widest border-b border-gray-50 mb-3 uppercase">Payment Detail</h3>
                                 <div class="grid grid-cols-[auto_1fr] gap-x-8 gap-y-2 text-[12px] items-center">
@@ -481,6 +532,7 @@
                             </div>
 
                             ${deliveryHtml}
+                            ${reviewHtml}
                         </div>
 
                         <div class="w-full">
