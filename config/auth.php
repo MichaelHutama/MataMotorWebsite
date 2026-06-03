@@ -40,7 +40,11 @@ return [
     'guards' => [
         'web' => [
             'driver' => 'session',
-            'provider' => 'users',
+            'provider' => 'customers',
+        ],
+        'mechanic' => [
+            'driver' => 'session',
+            'provider' => 'mechanics',
         ],
     ],
 
@@ -62,15 +66,14 @@ return [
     */
 
     'providers' => [
-        'users' => [
+        'customers' => [
             'driver' => 'eloquent',
-            'model' => env('AUTH_MODEL', User::class),
+            'model' => App\Models\Customer::class,
         ],
-
-        // 'users' => [
-        //     'driver' => 'database',
-        //     'table' => 'users',
-        // ],
+        'mechanics' => [
+            'driver' => 'eloquent',
+            'model' => App\Models\Mechanic::class,
+        ],
     ],
 
     /*

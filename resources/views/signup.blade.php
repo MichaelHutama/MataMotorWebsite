@@ -26,7 +26,8 @@
     </a>
 
     <!-- Form -->
-    <form class="space-y-6 mt-6" action="{{ route('login') }}" method="GET" enctype="multipart/form-data">
+    <form class="space-y-6 mt-6" action="{{ route('signup.submit') }}" method="POST" enctype="multipart/form-data">
+      @csrf
       <div>
         <label for="profile_picture" class="block text-sm font-medium text-gray-700">Profile Picture</label>
         <input type="file" id="profile_picture" name="profile_picture" accept="image/*"
@@ -94,7 +95,7 @@
         <!-- Sign In Link directly below -->
         <p class="mt-4 text-sm text-gray-600">
           Already have an account?
-          <a href="{{ route('login') }}" class="text-[#15395c] hover:underline hover:text-[#1c4974] font-medium">Sign In</a>
+          <a href="{{ route('customer.login.page') }}" class="text-[#15395c] hover:underline hover:text-[#1c4974] font-medium">Sign In</a>
         </p>
       </div>
     </form>
@@ -125,7 +126,7 @@
     document.querySelector('form').addEventListener('submit', function(e) {
       e.preventDefault();
       showSuccessModal('Sign Up Success!').then(() => {
-        window.location.href = "{{ route('login') }}";
+        window.location.href = "{{ route('customer.login.page') }}";
       });
     });
   </script>

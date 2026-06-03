@@ -26,7 +26,8 @@
     </a>
 
     <!-- Form -->
-    <form class="space-y-8 mt-6" action="{{ url('/') }}" method="GET">
+    <form class="space-y-8 mt-6" action="{{ route('customer.login.submit') }}" method="POST">
+      @csrf
       <div>
         <label for="email" class="block text-sm font-medium text-gray-700">Email</label>
         <input type="email" id="email" name="email" placeholder="Enter your email"
@@ -59,7 +60,7 @@
         <!-- Sign Up Link directly below -->
         <p class="mt-4 text-sm text-gray-600">
           Don't have any account?
-          <a href="{{route('signup')}}" class="text-[#15395c] hover:underline hover:text-[#1c4974] font-medium">Sign Up</a>
+          <a href="{{route('signup.page')}}" class="text-[#15395c] hover:underline hover:text-[#1c4974] font-medium">Sign Up</a>
         </p>
       </div>
     </form>

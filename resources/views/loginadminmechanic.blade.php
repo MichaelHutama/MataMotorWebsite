@@ -26,7 +26,8 @@
     </a>
 
     <!-- Form -->
-    <form class="space-y-8 mt-6" action="{{ url('/') }}" method="GET">
+    <form class="space-y-8 mt-6" action="{{ route('admin.login.submit') }}" method="POST">
+      @csrf
       <div>
         <label for="user_id" class="block text-sm font-medium text-gray-700">User ID</label>
         <input type="text" id="user_id" name="user_id" placeholder="Enter your User ID"
