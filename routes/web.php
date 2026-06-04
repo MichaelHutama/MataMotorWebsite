@@ -1,63 +1,95 @@
 <?php
-
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\AuthController;
+use App\Http\Controllers\CustomerController;
+use App\Http\Controllers\OwnerController;
+use App\Http\Controllers\MechanicController;
 
-// =========================================================
-// 1. HALAMAN AKSES BEBAS (GUEST / BELUM LOGIN)
-// =========================================================
+// ── PUBLIC ─────────────────────────────────────────────────
+Route::get('/',          fn() => view('welcome'))->name('welcome');
+Route::get('/about',     fn() => view('aboutus'))->name('aboutus');
+Route::get('/products',  [CustomerController::class, 'products'])->name('products');
+Route::get('/products/{id}', [CustomerController::class, 'productDetail'])->name('productdetail');
 
-// Jalur Login & Signup Customer
-Route::get('/login', function () { return view('login'); })->name('customer.login.page');
-Route::get('/signup', function () { return view('signup'); })->name('signup.page');
-Route::post('/signup', [AuthController::class, 'signup'])->name('signup.submit');
-Route::post('/login/customer', [AuthController::class, 'loginCustomer'])->name('customer.login.submit');
+// ── AUTH ───────────────────────────────────────────────────
+Route::get('/login',        [AuthController::class, 'showLogin'])->name('login');
+Route::post('/login',       [AuthController::class, 'login'])->name('login.post');
+Route::get('/signup',       [AuthController::class, 'showRegister'])->name('signup');
+Route::post('/signup',      [AuthController::class, 'register'])->name('register');
+Route::post('/logout',      [AuthController::class, 'logout'])->name('logout');
 
-// Jalur Login Admin/Mechanic/Owner (PASTIKAN URL-NYA SAMA)
-Route::get('/login/admin', function () { return view('loginadminmechanic'); })->name('admin.login.page');
-Route::post('/login/admin', [AuthController::class, 'loginAdminMechanic'])->name('admin.login.submit');
+// Login mekanik & owner (halaman terpisah)
+Route::get('/login-staff',  [AuthController::class, 'showStaffLogin'])->name('loginadminmechanic');
+Route::post('/login-staff', [AuthController::class, 'staffLogin'])->name('loginadminmechanic.post');
 
-// Jalur Katalog Publik (Bisa dilihat sebelum login)
-Route::get('/products', function () { return view('products'); })->name('products.index');
-Route::get('/products/{id}', function () { return view('productdetail'); })->name('products.detail');
+// ── CUSTOMER ───────────────────────────────────────────────
+Route::middleware('auth.customer')->group(function () {
+    Route::get('/home',    [CustomerController::class, 'home'])->name('customer-home');
+    Route::get('/profile', [CustomerController::class, 'profile'])->name('customer-profile');
+    Route::put('/profile', [CustomerController::class, 'updateProfile'])->name('profile.update');
 
-// Logout Global
-Route::post('/logout', [AuthController::class, 'logout'])->name('logout');
+    // Kendaraan
+    Route::post('/vehicle',      [CustomerController::class, 'storeVehicle'])->name('vehicle.store');
+    Route::put('/vehicle/{id}',  [CustomerController::class, 'updateVehicle'])->name('vehicle.update');
+    Route::delete('/vehicle/{id}', [CustomerController::class, 'deleteVehicle'])->name('vehicle.delete');
 
+    // Booking
+    Route::get('/booking',       [CustomerController::class, 'booking'])->name('customer-booking');
+    Route::post('/booking',      [CustomerController::class, 'storeBooking'])->name('booking.store');
+    Route::delete('/booking/{id}', [CustomerController::class, 'cancelBooking'])->name('booking.cancel');
 
-// =========================================================
-// 2. KELOMPOK HALAMAN CUSTOMER (Terproteksi Guard 'web')
-// =========================================================
-Route::middleware(['isCustomer'])->group(function () {
-    Route::get('/customer/home', function () { return view('customer-home'); })->name('customer.home');
-    Route::get('/customer/cart', function () { return view('customer-cart'); })->name('customer.cart');
-    Route::get('/customer/checkout', function () { return view('customer-checkout'); })->name('customer.checkout');
-    Route::get('/customer/history', function () { return view('customer-history'); })->name('customer.history');
-    Route::get('/customer/payment', function () { return view('customer-payment'); })->name('customer.payment');
-    Route::get('/customer/payment-success', function () { return view('customer-paymentsuccess'); })->name('customer.paymentsuccess');
-    Route::get('/customer/profile', function () { return view('customer-profile'); })->name('customer.profile');
-    Route::get('/customer/aboutus', function () { return view('customer-aboutus'); })->name('customer.aboutus');
-    Route::get('/customer/booking', function () { return view('customer-booking'); })->name('customer.booking');
+    // Cart
+    Route::get('/cart',          [CustomerController::class, 'cart'])->name('customer-cart');
+    Route::post('/cart',         [CustomerController::class, 'addToCart'])->name('cart.add');
+    Route::put('/cart/{id}',     [CustomerController::class, 'updateCart'])->name('cart.update');
+    Route::delete('/cart/{id}',  [CustomerController::class, 'removeFromCart'])->name('cart.remove');
+
+    // Checkout & Payment
+    Route::get('/checkout',                   [CustomerController::class, 'checkout'])->name('customer-checkout');
+    Route::post('/checkout',                  [CustomerController::class, 'processCheckout'])->name('checkout.process');
+    Route::get('/payment/{transactionId}',    [CustomerController::class, 'payment'])->name('customer-payment');
+    Route::post('/payment/{transactionId}',   [CustomerController::class, 'submitPayment'])->name('payment.submit');
+    Route::get('/payment-success',            [CustomerController::class, 'paymentSuccess'])->name('customer-paymentsuccess');
+
+    // History & Review
+    Route::get('/history',                    [CustomerController::class, 'history'])->name('customer-history');
+    Route::post('/review/{serviceId}',        [CustomerController::class, 'submitReview'])->name('review.submit');
 });
 
+// ── OWNER ──────────────────────────────────────────────────
+Route::middleware('auth.owner')->prefix('owner')->group(function () {
+    Route::get('/home',        [OwnerController::class, 'home'])->name('owner-home');
 
-// =========================================================
-// 3. KELOMPOK HALAMAN MEKANIK (Terproteksi Guard 'mechanic')
-// =========================================================
-Route::middleware(['isMechanic'])->group(function () {
-    Route::get('/mechanic/home', function () { return view('mechanic-home'); })->name('mechanic.home');
-    Route::get('/mechanic/history', function () { return view('mechanic-history'); })->name('mechanic.history');
+    // Katalog sparepart
+    Route::get('/catalog',       [OwnerController::class, 'catalog'])->name('owner-catalog');
+    Route::post('/catalog',      [OwnerController::class, 'storeSparePart'])->name('catalog.store');
+    Route::put('/catalog/{id}',  [OwnerController::class, 'updateSparePart'])->name('catalog.update');
+    Route::delete('/catalog/{id}', [OwnerController::class, 'deleteSparePart'])->name('catalog.delete');
+
+    // Manajemen mekanik
+    Route::get('/mechanic',        [OwnerController::class, 'mechanic'])->name('owner-mechanic');
+    Route::post('/mechanic',       [OwnerController::class, 'storeMechanic'])->name('mechanic.store');
+    Route::put('/mechanic/{id}',   [OwnerController::class, 'updateMechanic'])->name('mechanic.update');
+    Route::delete('/mechanic/{id}',[OwnerController::class, 'deleteMechanic'])->name('mechanic.delete');
+
+    // Manajemen booking
+    Route::get('/booking',               [OwnerController::class, 'manageBooking'])->name('owner-managebooking');
+    Route::put('/booking/{id}/status',   [OwnerController::class, 'updateBookingStatus'])->name('booking.updatestatus');
+
+    // Transaksi
+    Route::get('/transaction',           [OwnerController::class, 'transaction'])->name('owner-transaction');
+    Route::get('/transaction/add',       [OwnerController::class, 'addTransaction'])->name('owner-addtransaction');
+    Route::post('/transaction',          [OwnerController::class, 'storeTransaction'])->name('transaction.store');
+    Route::put('/transaction/{id}/status', [OwnerController::class, 'updateTransactionStatus'])->name('transaction.updatestatus');
 });
 
+// ── MECHANIC ───────────────────────────────────────────────
+Route::middleware('auth.mechanic')->prefix('mechanic')->group(function () {
+    Route::get('/home',    [MechanicController::class, 'home'])->name('mechanic-home');
+    Route::get('/history', [MechanicController::class, 'history'])->name('mechanic-history');
+    Route::get('/products',     [MechanicController::class, 'products'])->name('mechanic-products');
+    Route::get('/products/{id}',[MechanicController::class, 'productDetail'])->name('mechanic-productdetail');
 
-// =========================================================
-// 4. KELOMPOK HALAMAN OWNER (Terproteksi Guard 'mechanic' ID MEC-0)
-// =========================================================
-Route::middleware(['isOwner'])->group(function () {
-    Route::get('/owner/home', function () { return view('owner-home'); })->name('owner.home');
-    Route::get('/owner/add-transaction', function () { return view('owner-addtransaction'); })->name('owner.addtransaction');
-    Route::get('/owner/catalog', function () { return view('owner-catalog'); })->name('owner.catalog');
-    Route::get('/owner/manage-booking', function () { return view('owner-managebooking'); })->name('owner.managebooking');
-    Route::get('/owner/mechanic', function () { return view('owner-mechanic'); })->name('owner.mechanic');
-    Route::get('/owner/transaction', function () { return view('owner-transaction'); })->name('owner.transaction');
+    Route::post('/spare-part-request',            [MechanicController::class, 'requestSparePart'])->name('sparepartrequest.store');
+    Route::put('/spare-part-request/{id}/status', [MechanicController::class, 'updateRequestStatus'])->name('sparepartrequest.updatestatus');
 });

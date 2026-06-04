@@ -1,35 +1,31 @@
 <?php
-
 namespace App\Models;
 
-use Illuminate\Foundation\Auth\User as Authenticatable;
+use Illuminate\Database\Eloquent\Model;
+use App\Helpers\IdGenerator;
 
-class ServiceCategory extends Authenticatable
+class ServiceCategory extends Model
 {
-    protected $table = 'ServiceCategory';
+    protected $table = 'service_categories';
     protected $primaryKey = 'ServiceCategoryID';
     public $incrementing = false;
     protected $keyType = 'string';
+    protected $fillable = ['ServiceCategoryID', 'ServiceCategoryName', 'ServiceIcon', 'ServicePrice'];
 
-    protected $guarded = [];
-
-    public function getAuthPassword()
+    protected static function boot()
     {
-        return $this->Password;
-    }
-
-    // Otomatisasi ID Sequence SVC-xxx
-    protected static function booted()
-    {
+        parent::boot();
         static::creating(function ($model) {
-            // Jika Anda sengaja menginput manual 'SVC-0' lewat Seeder/Form untuk Owner, logika ini dilewati
-            if (!$model->ServiceCategoryID) {
-                $latest = self::where('ServiceCategoryID', '!=', 'SVC-0')
-                    ->orderByRaw('CAST(SUBSTRING(ServiceCategoryID, 5) AS UNSIGNED) DESC')
-                    ->first();
-                $num = $latest ? ((int) substr($latest->ServiceCategoryID, 4)) + 1 : 1;
-                $model->ServiceCategoryID = 'SVC-' . $num;
+            if (empty($model->ServiceCategoryID)) {
+                $model->ServiceCategoryID = IdGenerator::serviceCategory();
             }
         });
+    }
+
+    public function mechanics() {
+        return $this->belongsToMany(Mechanic::class, 'mechanic_specializations', 'ServiceCategoryID', 'MechanicID');
+    }
+    public function queues() {
+        return $this->hasMany(Queue::class, 'ServiceCategoryID', 'ServiceCategoryID');
     }
 }

@@ -1,34 +1,36 @@
 <?php
-
 namespace App\Models;
 
 use Illuminate\Foundation\Auth\User as Authenticatable;
-use Illuminate\Notifications\Notifiable;
+use App\Helpers\IdGenerator;
 
 class Customer extends Authenticatable
 {
-    use Notifiable;
-
-    protected $table = 'Customer';
+    protected $table = 'customers';
     protected $primaryKey = 'CustomerID';
     public $incrementing = false;
     protected $keyType = 'string';
-    public $timestamps = false;
-    protected $guarded = [];
 
-    // Mengarahkan kolom password kustom ke sistem Auth Laravel
-    public function getAuthPassword()
-    {
-        return $this->Password;
-    }
+    protected $fillable = [
+        'CustomerID', 'CustomerName', 'ProfilePicture',
+        'Email', 'Password', 'Number', 'Address',
+    ];
+    protected $hidden = ['Password'];
 
-    // Otomatisasi ID Sequence CUS-xxx
-    protected static function booted()
+    protected static function boot()
     {
+        parent::boot();
         static::creating(function ($model) {
-            $latest = self::orderByRaw('CAST(SUBSTRING(CustomerID, 5) AS UNSIGNED) DESC')->first();
-            $num = $latest ? ((int) substr($latest->CustomerID, 4)) + 1 : 1;
-            $model->CustomerID = 'CUS-' . $num;
+            if (empty($model->CustomerID)) {
+                $model->CustomerID = IdGenerator::customer();
+            }
         });
     }
+
+    public function getAuthPassword() { return $this->Password; }
+
+    public function vehicles()     { return $this->hasMany(Vehicle::class, 'CustomerID', 'CustomerID'); }
+    public function queues()       { return $this->hasMany(Queue::class, 'CustomerID', 'CustomerID'); }
+    public function carts()        { return $this->hasMany(Cart::class, 'CustomerID', 'CustomerID'); }
+    public function transactions() { return $this->hasMany(Transaction::class, 'CustomerID', 'CustomerID'); }
 }

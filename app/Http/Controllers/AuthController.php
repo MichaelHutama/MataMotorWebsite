@@ -1,86 +1,111 @@
 <?php
-
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
 use App\Models\Customer;
 use App\Models\Mechanic;
 
 class AuthController extends Controller
 {
-    // Login khusus Customer
-    public function loginCustomer(Request $request)
+    // ── Customer Login
+    public function showLogin()  { return view('login'); }
+
+    public function login(Request $request)
     {
-        $credentials = $request->validate([
-            'Email' => 'required|email',
+        $request->validate([
+            'Email'    => 'required|email',
             'Password' => 'required',
         ]);
 
         $customer = Customer::where('Email', $request->Email)->first();
 
-        if ($customer && Hash::check($request->Password, $customer->Password)) {
-            Auth::guard('web')->login($customer);
-            return redirect()->route('customer.home')->with('success', 'Selamat datang!');
+        if (!$customer || !Hash::check($request->Password, $customer->Password)) {
+            return back()->withErrors(['Email' => 'Email atau password salah.'])->withInput();
         }
 
-        return back()->with('error', 'Email atau Password salah.');
-    }
-
-    // Login khusus Admin/Mechanic/Owner
-    public function loginAdminMechanic(Request $request)
-    {
-        $request->validate([
-            'MechanicID' => 'required|string',
-            'Password' => 'required',
+        session([
+            'customer_id'   => $customer->CustomerID,
+            'customer_name' => $customer->CustomerName,
+            'role'          => 'customer',
         ]);
 
-        $mechanicID = strtoupper($request->MechanicID);
-        $mechanic = Mechanic::where('MechanicID', $mechanicID)->first();
-
-        if ($mechanic && Hash::check($request->Password, $mechanic->Password)) {
-            if (!$mechanic->IsActive) {
-                return back()->with('error', 'Akun Anda dinonaktifkan.');
-            }
-
-            Auth::guard('mechanic')->login($mechanic);
-
-            if ($mechanic->MechanicID === 'MEC-0') {
-                return redirect()->route('owner.home')->with('success', 'Selamat datang Owner!');
-            }
-            return redirect()->route('mechanic.home')->with('success', 'Selamat datang Mekanik!');
-        }
-
-        return back()->with('error', 'ID atau Password salah.');
+        return redirect()->route('customer-home');
     }
 
-    // Registrasi Customer (signup.blade.php)
-    public function signup(Request $request)
+    // ── Customer Register
+    public function showRegister() { return view('signup'); }
+
+    public function register(Request $request)
     {
         $request->validate([
-            'CustomerName' => 'required|string|max:100',
-            'Email' => 'required|email|unique:Customer,Email',
-            'Password' => 'required|min:6',
-            'Number' => 'required',
-            'Address' => 'required'
+            'CustomerName'          => 'required|string|max:100',
+            'Email'                 => 'required|email|unique:customers,Email',
+            'Password'              => 'required|min:6|confirmed',
+            'Number'                => 'required|string|max:20',
+            'Address'               => 'required|string|max:255',
         ]);
 
-        Customer::create([
+        $customer = Customer::create([
             'CustomerName' => $request->CustomerName,
-            'Email' => $request->Email,
-            'Password' => Hash::make($request->Password),
-            'Number' => $request->Number,
-            'Address' => $request->Address,
+            'Email'        => $request->Email,
+            'Password'     => Hash::make($request->Password),
+            'Number'       => $request->Number,
+            'Address'      => $request->Address,
         ]);
 
-        return redirect()->route('customer.login.page')->with('success', 'Pendaftaran berhasil! Silakan login.');
+        session([
+            'customer_id'   => $customer->CustomerID,
+            'customer_name' => $customer->CustomerName,
+            'role'          => 'customer',
+        ]);
+
+        return redirect()->route('customer-home');
     }
 
+    // ── Staff Login (Owner & Mechanic — halaman sama)
+    public function showStaffLogin() { return view('loginadminmechanic'); }
+
+    public function staffLogin(Request $request)
+    {
+        $request->validate([
+            'MechanicName' => 'required',
+            'Password'     => 'required',
+        ]);
+
+        $mechanic = Mechanic::where('MechanicName', $request->MechanicName)->first();
+
+        if (!$mechanic || !Hash::check($request->Password, $mechanic->Password)) {
+            return back()->withErrors(['MechanicName' => 'Nama atau password salah.'])->withInput();
+        }
+
+        if (!$mechanic->IsActive) {
+            return back()->withErrors(['MechanicName' => 'Akun tidak aktif.'])->withInput();
+        }
+
+        // MEC-0 = Owner
+        if ($mechanic->MechanicID === 'MEC-0') {
+            session([
+                'mechanic_id'   => $mechanic->MechanicID,
+                'mechanic_name' => $mechanic->MechanicName,
+                'role'          => 'owner',
+            ]);
+            return redirect()->route('owner-home');
+        }
+
+        // Mechanic biasa
+        session([
+            'mechanic_id'   => $mechanic->MechanicID,
+            'mechanic_name' => $mechanic->MechanicName,
+            'role'          => 'mechanic',
+        ]);
+        return redirect()->route('mechanic-home');
+    }
+
+    // ── Logout (semua role)
     public function logout()
     {
-        Auth::guard('web')->logout();
-        Auth::guard('mechanic')->logout();
-        return redirect()->route('customer.login.page')->with('success', 'Berhasil logout.');
+        session()->flush();
+        return redirect()->route('login');
     }
 }

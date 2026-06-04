@@ -1,35 +1,27 @@
 <?php
-
 namespace App\Models;
 
-use Illuminate\Foundation\Auth\User as Authenticatable;
+use Illuminate\Database\Eloquent\Model;
+use App\Helpers\IdGenerator;
 
-class SparePart  extends Authenticatable
+class SparePart extends Model
 {
-    protected $table = 'SparePart';
+    protected $table = 'spare_parts';
     protected $primaryKey = 'SparePartID';
     public $incrementing = false;
     protected $keyType = 'string';
+    protected $fillable = ['SparePartID', 'SparePartCategoryID', 'Name', 'Description', 'Stock', 'Price', 'Image'];
 
-    protected $guarded = [];
-
-    public function getAuthPassword()
+    protected static function boot()
     {
-        return $this->Password;
-    }
-
-    // Otomatisasi ID Sequence SP-xxx
-    protected static function booted()
-    {
+        parent::boot();
         static::creating(function ($model) {
-            // Jika Anda sengaja menginput manual 'SP-0' lewat Seeder/Form untuk Owner, logika ini dilewati
-            if (!$model->SparePartID) {
-                $latest = self::where('SparePartID', '!=', 'SP-0')
-                    ->orderByRaw('CAST(SUBSTRING(SparePartID, 4) AS UNSIGNED) DESC')
-                    ->first();
-                $num = $latest ? ((int) substr($latest->SparePartID, 3)) + 1 : 1;
-                $model->SparePartID = 'SP-' . $num;
+            if (empty($model->SparePartID)) {
+                $model->SparePartID = IdGenerator::sparePart();
             }
         });
     }
+
+    public function category()  { return $this->belongsTo(SparePartCategory::class, 'SparePartCategoryID', 'SparePartCategoryID'); }
+    public function cartItems() { return $this->hasMany(Cart::class, 'SparePartID', 'SparePartID'); }
 }

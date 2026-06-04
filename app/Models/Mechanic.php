@@ -1,36 +1,46 @@
 <?php
-
 namespace App\Models;
 
 use Illuminate\Foundation\Auth\User as Authenticatable;
+use App\Helpers\IdGenerator;
 
 class Mechanic extends Authenticatable
 {
-    protected $table = 'Mechanic';
+    protected $table = 'mechanics';
     protected $primaryKey = 'MechanicID';
     public $incrementing = false;
     protected $keyType = 'string';
 
-    // TAMBAHKAN BARIS INI:
-    public $timestamps = false; 
+    protected $fillable = [
+        'MechanicID', 'MechanicName', 'Number', 'IsActive', 'Password',
+    ];
+    protected $hidden = ['Password'];
 
-    protected $guarded = [];
-
-    public function getAuthPassword()
+    protected static function boot()
     {
-        return $this->Password;
-    }
-
-    protected static function booted()
-    {
+        parent::boot();
         static::creating(function ($model) {
-            if (!$model->MechanicID) {
-                $latest = self::where('MechanicID', '!=', 'MEC-0')
-                    ->orderByRaw('CAST(SUBSTRING(MechanicID, 5) AS UNSIGNED) DESC')
-                    ->first();
-                $num = $latest ? ((int) substr($latest->MechanicID, 4)) + 1 : 1;
-                $model->MechanicID = 'MEC-' . $num;
+            // MEC-0 di-seed manual — auto-generate hanya jika belum diset
+            if (empty($model->MechanicID)) {
+                $model->MechanicID = IdGenerator::mechanic();
             }
         });
+    }
+
+    public function isOwner(): bool { return $this->MechanicID === 'MEC-0'; }
+    public function getAuthPassword() { return $this->Password; }
+
+    public function specializations() {
+        return $this->belongsToMany(
+            ServiceCategory::class,
+            'mechanic_specializations',
+            'MechanicID', 'ServiceCategoryID'
+        );
+    }
+    public function assignments() {
+        return $this->hasMany(MechanicAssignment::class, 'MechanicID', 'MechanicID');
+    }
+    public function sparePartRequests() {
+        return $this->hasMany(SparePartRequest::class, 'MechanicID', 'MechanicID');
     }
 }

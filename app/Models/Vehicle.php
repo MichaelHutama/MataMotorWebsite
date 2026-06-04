@@ -1,26 +1,29 @@
 <?php
-
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
+use App\Helpers\IdGenerator;
 
 class Vehicle extends Model
 {
-    protected $table = 'Vehicle';
+    protected $table = 'vehicles';
     protected $primaryKey = 'VehicleID';
     public $incrementing = false;
     protected $keyType = 'string';
-    public $timestamps = false;
-    protected $guarded = [];
+    protected $fillable = ['VehicleID', 'CustomerID', 'VehicleCategory', 'Brand', 'ProductionYear', 'PlateNumber'];
 
-    protected static function booted()
+    protected static function boot()
     {
+        parent::boot();
         static::creating(function ($model) {
-            $latest = self::where('CustomerID', $model->CustomerID)
-                ->orderByRaw('CAST(SUBSTRING_INDEX(VehicleID, "-VEC-", -1) AS UNSIGNED) DESC')
-                ->first();
-            $num = $latest ? ((int) substr(strrchr($latest->VehicleID, "-"), 1)) + 1 : 1;
-            $model->VehicleID = strtoupper($model->CustomerID . '-VEC-' . $num);
+            if (empty($model->VehicleID)) {
+                // Butuh CustomerID untuk generate ID
+                $model->VehicleID = IdGenerator::vehicle($model->CustomerID);
+            }
         });
     }
+
+    public function customer()  { return $this->belongsTo(Customer::class, 'CustomerID', 'CustomerID'); }
+    public function queues()    { return $this->hasMany(Queue::class, 'VehicleID', 'VehicleID'); }
+    public function services()  { return $this->hasMany(ServicePerformed::class, 'VehicleID', 'VehicleID'); }
 }

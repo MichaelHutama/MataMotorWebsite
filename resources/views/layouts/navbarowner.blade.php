@@ -23,22 +23,22 @@
     <div class="max-w-screen-2xl mx-auto px-4 sm:px-6 lg:px-8">
         <div class="flex h-16 md:h-20 items-center justify-between gap-4">
             <div class="flex-shrink-0 flex items-center">
-                <a href="{{ route('owner-home') }}">
+                <a href="{{ route('owner.home') }}">
                     <img class="h-9 w-auto md:h-12" src="{{ asset('images/logomatamotor.png') }}" alt="Mata Motor">
                 </a>
             </div>
 
             <div class="hidden md:flex flex-1 justify-center space-x-10">
-                <a href="{{ route('owner-catalog') }}" class="text-gray-900 hover:text-blue-600 px-3 py-2 text-lg font-medium transition duration-200">
+                <a href="{{ route('owner.catalog') }}" class="text-gray-900 hover:text-blue-600 px-3 py-2 text-lg font-medium transition duration-200">
                     Catalog
                 </a>
-                <a href="{{ route('owner-managebooking') }}" class="text-gray-900 hover:text-blue-600 px-3 py-2 text-lg font-medium transition duration-200">
+                <a href="{{ route('owner.managebooking') }}" class="text-gray-900 hover:text-blue-600 px-3 py-2 text-lg font-medium transition duration-200">
                     Queue
                 </a>
-                <a href="{{ route('owner-transaction') }}" class="text-gray-900 hover:text-blue-600 px-3 py-2 text-lg font-medium transition duration-200">
+                <a href="{{ route('owner.transaction') }}" class="text-gray-900 hover:text-blue-600 px-3 py-2 text-lg font-medium transition duration-200">
                     Transaction
                 </a>
-                <a href="{{ route('owner-mechanic') }}" class="text-gray-900 hover:text-blue-600 px-3 py-2 text-lg font-medium transition duration-200">
+                <a href="{{ route('owner.mechanic') }}" class="text-gray-900 hover:text-blue-600 px-3 py-2 text-lg font-medium transition duration-200">
                     Mechanic
                 </a>
                 <a href="#" class="text-gray-900 hover:text-blue-600 px-3 py-2 text-lg font-medium transition duration-200">
@@ -69,16 +69,16 @@
 
         <div id="mobile-menu" class="hidden md:hidden pb-4">
             <div class="border-t border-gray-200 pt-3 space-y-1">
-                <a href="#" class="block rounded-md px-3 py-2 text-base font-medium text-gray-900 hover:bg-gray-100 hover:text-blue-600 transition duration-200">
+                <a href="{{ route('owner.catalog') }}" class="block rounded-md px-3 py-2 text-base font-medium text-gray-900 hover:bg-gray-100 hover:text-blue-600 transition duration-200">
                     Catalog
                 </a>
-                <a href="{{ route('owner-home') }}" class="block rounded-md px-3 py-2 text-base font-medium text-gray-900 hover:bg-gray-100 hover:text-blue-600 transition duration-200">
+                <a href="{{ route('owner.managebooking') }}" class="block rounded-md px-3 py-2 text-base font-medium text-gray-900 hover:bg-gray-100 hover:text-blue-600 transition duration-200">
                     Queue
                 </a>
-                <a href="#" class="block rounded-md px-3 py-2 text-base font-medium text-gray-900 hover:bg-gray-100 hover:text-blue-600 transition duration-200">
+                <a href="{{ route('owner.transaction') }}" class="block rounded-md px-3 py-2 text-base font-medium text-gray-900 hover:bg-gray-100 hover:text-blue-600 transition duration-200">
                     Transaction
                 </a>
-                <a href="#" class="block rounded-md px-3 py-2 text-base font-medium text-gray-900 hover:bg-gray-100 hover:text-blue-600 transition duration-200">
+                <a href="{{ route('owner.mechanic') }}" class="block rounded-md px-3 py-2 text-base font-medium text-gray-900 hover:bg-gray-100 hover:text-blue-600 transition duration-200">
                     Mechanic
                 </a>
                 <a href="#" class="block rounded-md px-3 py-2 text-base font-medium text-gray-900 hover:bg-gray-100 hover:text-blue-600 transition duration-200">

@@ -1,26 +1,28 @@
 <?php
-
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
+use App\Helpers\IdGenerator;
 
 class SparePartRequest extends Model
 {
-    protected $table = 'SparePartRequest';
+    protected $table = 'spare_part_requests';
     protected $primaryKey = 'SparePartRequestID';
     public $incrementing = false;
     protected $keyType = 'string';
-    public $timestamps = false;
-    protected $guarded = [];
+    protected $fillable = ['SparePartRequestID', 'ServiceID', 'MechanicID', 'Notes', 'Status'];
 
-    protected static function booted()
+    protected static function boot()
     {
+        parent::boot();
         static::creating(function ($model) {
-            $latest = self::where('ServiceID', $model->ServiceID)
-                ->orderByRaw('CAST(SUBSTRING_INDEX(SparePartRequestID, "-SPR-", -1) AS UNSIGNED) DESC')
-                ->first();
-            $num = $latest ? ((int) substr(strrchr($latest->SparePartRequestID, "-"), 1)) + 1 : 1;
-            $model->SparePartRequestID = strtoupper("SPR-" . $model->ServiceID . "-" . $num);
+            if (empty($model->SparePartRequestID)) {
+                $model->SparePartRequestID = IdGenerator::sparePartRequest($model->ServiceID);
+            }
         });
     }
+
+    public function servicePerformed() { return $this->belongsTo(ServicePerformed::class, 'ServiceID', 'ServiceID'); }
+    public function mechanic()         { return $this->belongsTo(Mechanic::class, 'MechanicID', 'MechanicID'); }
+    public function items()            { return $this->hasMany(SparePartRequestItem::class, 'SparePartRequestID', 'SparePartRequestID'); }
 }

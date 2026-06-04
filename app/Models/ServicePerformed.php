@@ -1,26 +1,34 @@
 <?php
-
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
+use App\Helpers\IdGenerator;
 
 class ServicePerformed extends Model
 {
-    protected $table = 'ServicePerformed';
-    protected $primaryKey = 'ServicePerformedID';
+    protected $table = 'service_performed';
+    protected $primaryKey = 'ServiceID';
     public $incrementing = false;
     protected $keyType = 'string';
-    public $timestamps = false;
-    protected $guarded = [];
+    protected $fillable = [
+        'ServiceID', 'TransactionID', 'QueueID', 'VehicleID',
+        'ServiceCategoryID', 'PriceAtService', 'Status', 'Rating', 'ReviewDesc',
+    ];
 
-    protected static function booted()
+    protected static function boot()
     {
+        parent::boot();
         static::creating(function ($model) {
-            $latest = self::where('TransactionID', $model->TransactionID)
-                ->orderByRaw('CAST(SUBSTRING_INDEX(ServicePerformedID, "-SVP-", -1) AS UNSIGNED) DESC')
-                ->first();
-            $num = $latest ? ((int) substr(strrchr($latest->ServicePerformedID, "-"), 1)) + 1 : 1;
-            $model->ServicePerformedID = strtoupper("SVP-" . $model->TransactionID . "-" . $num);
+            if (empty($model->ServiceID)) {
+                $model->ServiceID = IdGenerator::servicePerformed($model->TransactionID);
+            }
         });
     }
+
+    public function transaction()      { return $this->belongsTo(Transaction::class, 'TransactionID', 'TransactionID'); }
+    public function queue()            { return $this->belongsTo(Queue::class, 'QueueID', 'QueueID'); }
+    public function vehicle()          { return $this->belongsTo(Vehicle::class, 'VehicleID', 'VehicleID'); }
+    public function serviceCategory()  { return $this->belongsTo(ServiceCategory::class, 'ServiceCategoryID', 'ServiceCategoryID'); }
+    public function assignments()      { return $this->hasMany(MechanicAssignment::class, 'ServiceID', 'ServiceID'); }
+    public function sparePartRequests(){ return $this->hasMany(SparePartRequest::class, 'ServiceID', 'ServiceID'); }
 }

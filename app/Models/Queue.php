@@ -1,27 +1,30 @@
 <?php
-
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
+use App\Helpers\IdGenerator;
 
 class Queue extends Model
 {
-    protected $table = 'Queue';
+    protected $table = 'queues';
     protected $primaryKey = 'QueueID';
     public $incrementing = false;
     protected $keyType = 'string';
-    public $timestamps = false;
-    protected $guarded = [];
+    protected $fillable = ['QueueID', 'CustomerID', 'VehicleID', 'BookingTime', 'ServiceCategoryID', 'Description', 'QueueStatus'];
 
-    protected static function booted()
+    protected static function boot()
     {
+        parent::boot();
         static::creating(function ($model) {
-            $date = now()->format('Ymd');
-            $latest = self::where('QueueID', 'like', "Q-$date-%")
-                ->orderByRaw('CAST(SUBSTRING_INDEX(QueueID, "-", -1) AS UNSIGNED) DESC')
-                ->first();
-            $num = $latest ? ((int) substr(strrchr($latest->QueueID, "-"), 1)) + 1 : 1;
-            $model->QueueID = "Q-{$date}-{$num}";
+            if (empty($model->QueueID)) {
+                // Gunakan BookingTime yang sudah diset
+                $model->QueueID = IdGenerator::queue($model->BookingTime);
+            }
         });
     }
+
+    public function customer()         { return $this->belongsTo(Customer::class, 'CustomerID', 'CustomerID'); }
+    public function vehicle()          { return $this->belongsTo(Vehicle::class, 'VehicleID', 'VehicleID'); }
+    public function serviceCategory()  { return $this->belongsTo(ServiceCategory::class, 'ServiceCategoryID', 'ServiceCategoryID'); }
+    public function servicePerformed() { return $this->hasOne(ServicePerformed::class, 'QueueID', 'QueueID'); }
 }

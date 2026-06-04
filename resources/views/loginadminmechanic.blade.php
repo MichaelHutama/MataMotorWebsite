@@ -30,13 +30,13 @@
       @csrf
       <div>
         <label for="user_id" class="block text-sm font-medium text-gray-700">User ID</label>
-        <input type="text" id="user_id" name="user_id" placeholder="Enter your User ID"
+        <input type="text" id="user_id" name="MechanicID" placeholder="Enter your User ID"
           class="mt-2 block w-full px-4 py-2 border border-gray-300 rounded-md shadow-sm focus:ring-1 focus:ring-[#15395c] focus:border-[#15395c] focus:outline-none">
       </div>
       <div>
         <label for="password" class="block text-sm font-medium text-gray-700">Password</label>
         <div class="relative mt-2">
-          <input type="password" id="password" name="password" placeholder="Enter your password"
+          <input type="password" id="password" name="Password" placeholder="Enter your password"
             class="block w-full px-4 py-2 pr-20 border border-gray-300 rounded-md shadow-sm focus:ring-1 focus:ring-[#15395c] focus:border-[#15395c] focus:outline-none">
           <button type="button" id="toggle-password" aria-label="Toggle password visibility" class="absolute inset-y-0 right-3 my-auto inline-flex h-8 w-8 items-center justify-center text-[#15395c] hover:text-[#1c4974]" onclick="togglePasswordVisibility('password', 'toggle-password')">
             <svg data-icon-closed xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">

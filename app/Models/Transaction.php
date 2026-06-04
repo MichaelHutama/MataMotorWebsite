@@ -1,27 +1,29 @@
 <?php
-
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
+use App\Helpers\IdGenerator;
 
 class Transaction extends Model
 {
-    protected $table = 'Transaction';
+    protected $table = 'transactions';
     protected $primaryKey = 'TransactionID';
     public $incrementing = false;
     protected $keyType = 'string';
-    public $timestamps = false;
-    protected $guarded = [];
+    protected $fillable = ['TransactionID', 'CustomerID', 'TransactionTime'];
 
-    protected static function booted()
+    protected static function boot()
     {
+        parent::boot();
         static::creating(function ($model) {
-            $date = now()->format('Ymd');
-            $latest = self::where('TransactionID', 'like', "T-$date-%")
-                ->orderByRaw('CAST(SUBSTRING_INDEX(TransactionID, "-", -1) AS UNSIGNED) DESC')
-                ->first();
-            $num = $latest ? ((int) substr(strrchr($latest->TransactionID, "-"), 1)) + 1 : 1;
-            $model->TransactionID = "T-{$date}-{$num}";
+            if (empty($model->TransactionID)) {
+                $model->TransactionID = IdGenerator::transaction();
+            }
         });
     }
+
+    public function customer()          { return $this->belongsTo(Customer::class, 'CustomerID', 'CustomerID'); }
+    public function sparepartSales()    { return $this->hasMany(SparePartSales::class, 'TransactionID', 'TransactionID'); }
+    public function servicesPerformed() { return $this->hasMany(ServicePerformed::class, 'TransactionID', 'TransactionID'); }
+    public function payment()           { return $this->hasOne(Payment::class, 'TransactionID', 'TransactionID'); }
 }

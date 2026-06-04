@@ -1,35 +1,28 @@
 <?php
-
 namespace App\Models;
 
-use Illuminate\Foundation\Auth\User as Authenticatable;
+use Illuminate\Database\Eloquent\Model;
+use App\Helpers\IdGenerator;
 
-class SparePartCategory extends Authenticatable
+class SparePartCategory extends Model
 {
-    protected $table = 'SparePartCategory';
+    protected $table = 'spare_part_categories';
     protected $primaryKey = 'SparePartCategoryID';
     public $incrementing = false;
     protected $keyType = 'string';
+    protected $fillable = ['SparePartCategoryID', 'SparePartCategoryName'];
 
-    protected $guarded = [];
-
-    public function getAuthPassword()
+    protected static function boot()
     {
-        return $this->Password;
-    }
-
-    // Otomatisasi ID Sequence SPC-xxx
-    protected static function booted()
-    {
+        parent::boot();
         static::creating(function ($model) {
-            // Jika Anda sengaja menginput manual 'SPC-0' lewat Seeder/Form untuk Owner, logika ini dilewati
-            if (!$model->SparePartCategoryID) {
-                $latest = self::where('SparePartCategoryID', '!=', 'SPC-0')
-                    ->orderByRaw('CAST(SUBSTRING(SparePartCategoryID, 5) AS UNSIGNED) DESC')
-                    ->first();
-                $num = $latest ? ((int) substr($latest->SparePartCategoryID, 4)) + 1 : 1;
-                $model->SparePartCategoryID = 'SPC-' . $num;
+            if (empty($model->SparePartCategoryID)) {
+                $model->SparePartCategoryID = IdGenerator::sparePartCategory();
             }
         });
+    }
+
+    public function spareParts() {
+        return $this->hasMany(SparePart::class, 'SparePartCategoryID', 'SparePartCategoryID');
     }
 }

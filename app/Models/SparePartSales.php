@@ -1,26 +1,31 @@
 <?php
-
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
+use App\Helpers\IdGenerator;
 
 class SparePartSales extends Model
 {
-    protected $table = 'SparePartSales';
+    protected $table = 'spare_part_sales';
     protected $primaryKey = 'SparePartSalesID';
     public $incrementing = false;
     protected $keyType = 'string';
-    public $timestamps = false;
-    protected $guarded = [];
+    protected $fillable = [
+        'SparePartSalesID', 'TransactionID', 'Type', 'Status',
+        'PriceAtPurchase', 'DeliveryMethod', 'ReceiverName',
+        'ReceiverPhone', 'ReceiverAddress', 'Notes',
+    ];
 
-    protected static function booted()
+    protected static function boot()
     {
+        parent::boot();
         static::creating(function ($model) {
-            $latest = self::where('TransactionID', $model->TransactionID)
-                ->orderByRaw('CAST(SUBSTRING_INDEX(SparePartSalesID, "-SPS-", -1) AS UNSIGNED) DESC')
-                ->first();
-            $num = $latest ? ((int) substr(strrchr($latest->SparePartSalesID, "-"), 1)) + 1 : 1;
-            $model->SparePartSalesID = strtoupper("SPS-" . $model->TransactionID . "-" . $num);
+            if (empty($model->SparePartSalesID)) {
+                $model->SparePartSalesID = IdGenerator::sparePartSales($model->TransactionID);
+            }
         });
     }
+
+    public function transaction() { return $this->belongsTo(Transaction::class, 'TransactionID', 'TransactionID'); }
+    public function items()       { return $this->hasMany(SparePartSalesItem::class, 'SparePartSalesID', 'SparePartSalesID'); }
 }

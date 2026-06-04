@@ -35,18 +35,18 @@
       </div>
       <div>
         <label for="fullname" class="block text-sm font-medium text-gray-700">Full Name</label>
-        <input type="text" id="fullname" name="fullname" placeholder="Enter your full name"
+        <input type="text" id="fullname" name="CustomerName" placeholder="Enter your full name"
           class="mt-2 block w-full px-4 py-2 border border-gray-300 rounded-md shadow-sm focus:ring-1 focus:ring-[#15395c] focus:border-[#15395c] focus:outline-none">
       </div>
       <div>
         <label for="email" class="block text-sm font-medium text-gray-700">Email</label>
-        <input type="email" id="email" name="email" placeholder="Enter your email"
+        <input type="email" id="email" name="Email" placeholder="Enter your email"
           class="mt-2 block w-full px-4 py-2 border border-gray-300 rounded-md shadow-sm focus:ring-1 focus:ring-[#15395c] focus:border-[#15395c] focus:outline-none">
       </div>
       <div>
         <label for="password" class="block text-sm font-medium text-gray-700">Password</label>
         <div class="relative mt-2">
-          <input type="password" id="password" name="password" placeholder="Enter your password"
+          <input type="password" id="password" name="Password" placeholder="Enter your password"
             class="block w-full px-4 py-2 pr-20 border border-gray-300 rounded-md shadow-sm focus:ring-1 focus:ring-[#15395c] focus:border-[#15395c] focus:outline-none">
           <button type="button" id="toggle-password" aria-label="Toggle password visibility" class="absolute inset-y-0 right-3 my-auto inline-flex h-8 w-8 items-center justify-center text-[#15395c] hover:text-[#1c4974]" onclick="togglePasswordVisibility('password', 'toggle-password')">
             <svg data-icon-closed xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -61,12 +61,12 @@
       </div>
       <div>
         <label for="phone" class="block text-sm font-medium text-gray-700">Phone Number</label>
-        <input type="tel" id="phone" name="phone" placeholder="Enter your phone number"
+        <input type="tel" id="phone" name="Number" placeholder="Enter your phone number"
           class="mt-2 block w-full px-4 py-2 border border-gray-300 rounded-md shadow-sm focus:ring-1 focus:ring-[#15395c] focus:border-[#15395c] focus:outline-none">
       </div>
       <div>
         <label for="address" class="block text-sm font-medium text-gray-700">Address</label>
-        <textarea id="address" name="address" rows="3" placeholder="Enter your address"
+        <textarea id="address" name="Address" rows="3" placeholder="Enter your address"
           class="mt-2 block w-full px-4 py-2 border border-gray-300 rounded-md shadow-sm focus:ring-1 focus:ring-[#15395c] focus:border-[#15395c] focus:outline-none resize-none"></textarea>
       </div>
 
